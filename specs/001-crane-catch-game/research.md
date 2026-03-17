@@ -2,7 +2,7 @@
 
 **Phase**: 0 — Outline & Research  
 **Date**: 2026-03-17  
-**Status**: Complete（差分更新: 4方向移動 + リング形状）
+**Status**: Complete（差分更新: 3段階つかむ動作 + BGM和音メロディ + 動物の目追加 + 図鑑グリッド）
 
 ## 1. Three.js クレーン物理演算アプローチ
 
@@ -198,6 +198,79 @@ interface SaveData {
 - Z軸は「奥行き」に対応。Three.js の座標系で X=左右、Z=手前/奥が自然
 - CraneConfig に minZ/maxZ を追加するだけで範囲を設定可能（Data-Driven 原則に適合）
 - CatchSystem の距離判定を X-Z ユークリッド距離（`Math.sqrt(dx*dx + dz*dz)`）に変更
+
+## 11. クレーン3段階つかむ動作
+
+**Decision**: DROPPING ステート開始時に `craneArm.open()`、GRABBING ステートで `craneArm.close()` → 判定。現在の `close()` at DROPPING を修正
+
+**Rationale**:
+- 仕様 FR-003 で「開く → 下に降りる → 閉じてつかむ」の3段階が明記
+- ゲームセンターのリアルなクレーンは、アームが開いた状態で降下し、底に到達してから閉じてアイテムを掴む
+- 現状の実装は DROPPING で `close()` を呼んでおり、仕様と逆の挙動になっている
+- CraneArm の `open()` / `close()` メソッド自体は変更不要。呼び出しタイミングの修正のみ
+- CraneGameScene.update() の switch ケースを2箇所変更するだけで完了
+
+**Alternatives considered**:
+- アニメーション状態を追加（OPENING, CLOSING を分離） → 過剰。open/close は即座にターゲットスケール設定するだけで、補間は update() で行われるため現在の DROPPING/GRABBING で十分
+- CraneArm 側に状態管理を移動 → YAGNI。Scene 側で呼び分けるのがシンプル
+
+## 12. BGM和音メロディシーケンス設計
+
+**Decision**: AudioManager の `playBGM()` を和音メロディシーケンス再生に書き直し。タイトル用・ゲーム用の2パターン。OscillatorNode × 3 で和音生成、フェードイン/アウト対応
+
+**Rationale**:
+- 仕様 FR-013 で「BGMは単音ではなく和音を用いた『るんるんする』メロディ」と明記
+- 仕様 FR-013a で「タイトル画面とクレーンゲーム画面でそれぞれ異なるBGM」を要求
+- 仕様 FR-013b で「画面遷移時にBGMがスムーズに切り替わる（フェードイン/フェードアウト）」を要求
+- 現状の実装は単一の sine オシレーター（262Hz 固定）で和音・メロディの要件を満たしていない
+- Web Audio API の OscillatorNode を3つ同時に使用して和音（ルート + 3rd + 5th）を構成
+- メロディはノート配列として定義し、setValueAtTime / linearRampToValueAtTime で周波数をスケジューリング
+- フェードイン: gainNode.gain を 0 → 0.08 へ 0.5秒で linearRamp
+- フェードアウト: gainNode.gain を current → 0 へ 0.3秒で linearRamp、完了後に osc.stop()
+- Constitution Principle IV の範囲内（同時発音3〜4音は CPU 負荷微小）
+
+**メロディパターン設計**:
+- タイトル BGM: C major 系 — C4-E4-G4, F4-A4-C5, G4-B4-D5, C4-E4-G4（ゆったり、noteLength=0.5s）
+- ゲーム BGM: よりテンポ速め — C4-E4-G4, F4-A4-C5, G4-B4-D5, Am→F→G→C 進行（noteLength=0.3s）
+- ループポイント: シーケンス終了後に先頭へ再スケジュール
+
+**Alternatives considered**:
+- Tone.js → Constitution で大型ライブラリ追加は要検討と明記。Web Audio API 直接使用で十分な表現力
+- MIDI シーケンサー → 過剰。数小節のループメロディに MIDI パーサーは不要
+- 単一オシレーターのアルペジオ → 和音感が出ない。仕様の「和音」要件を満たさない
+
+## 13. 動物モデルの目パーツ設計
+
+**Decision**: items.ts の ModelParams に白目（eyeWhite: 0xffffff sphere）+ 黒目（pupil: 0x222222 sphere）を各動物の顔前面に配置。ライオン・ゾウ・キリン・コアラが対象
+
+**Rationale**:
+- 仕様 FR-012 で「各動物モデルにはしっかり目（黒目＋白目）を付け、正面から見て何の動物か識別しやすくしなければならない」と明記
+- 現状: ライオンは目なし、ゾウは目なし、キリンは目なし、コアラは小さい黒球のみ（白目なし）
+- ペンギン・イルカ・ウサギは既に目パーツあり。パンダは eyePatch がキャラクター性を表現
+- 白目 + 黒目の2層構造でカートゥーン調の表現力のある目を実現
+- パーツは既存の PartDefinition 型をそのまま使用。データ追加のみでコード変更なし
+- 各動物の頭部位置・向きに合わせた position 調整が必要（研究済み、plan.md の表を参照）
+
+**Alternatives considered**:
+- テクスチャマッピングで目を描画 → 外部ファイル不使用の制約に違反。プロシージャル生成の原則に反する
+- 全動物の目を統一サイズ → 動物ごとに頭のサイズ・形が異なるため、個別調整が自然
+- 目パーツ無しのまま → 仕様 FR-012 に違反
+
+## 14. 図鑑グリッドレイアウト設計
+
+**Decision**: ZukanScene の CSS グリッドを `repeat(4, 1fr)` 固定4列に変更。8アイテムが2行×4列に整列表示
+
+**Rationale**:
+- 仕様 FR-007 で「4列のグリッド（マトリックス）レイアウト（2行×4列）で整列表示」と明記
+- 現状は `repeat(auto-fill, minmax(80px, 1fr))` で、画面サイズにより列数が変動する
+- iPad 横向き（1024×768 有効サイズ）で8アイテムを4列にすると、各セルが約230px幅で子供にも見やすい
+- gap を 10px、min-height を 100px に調整して視認性確保
+- CSS のみの変更で完結し、ロジック・型の変更なし
+
+**Alternatives considered**:
+- `repeat(auto-fill, minmax(200px, 1fr))` → 画面によっては3列になる可能性。仕様の「4列」を厳密に満たさない
+- CSS Flexbox → Grid の方がマトリックスレイアウトに適している
+- カテゴリごとに列数を動的変更 → YAGNI。現状「どうぶつ」8種のみで4列固定が最適
 - HUD は十字配置（上下左右＋中央キャッチ）で5歳児にも直感的
 
 **InputState 変更**:

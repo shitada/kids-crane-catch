@@ -106,7 +106,7 @@ export class ZukanScene implements Scene {
     const grid = document.createElement('div');
     grid.className = 'zukan-grid';
     grid.style.cssText = `
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 12px; padding: 15px; flex: 1; overflow-y: auto;
       pointer-events: auto;
     `;

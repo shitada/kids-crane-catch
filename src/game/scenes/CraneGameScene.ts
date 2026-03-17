@@ -144,8 +144,9 @@ export class CraneGameScene implements Scene {
 
     switch (state) {
       case 'DROPPING': {
+        // Open the ring first, then descend
+        this.craneArm.open();
         this.armY = this.physicsSystem.drop(this.armY, deltaTime);
-        this.craneArm.close();
         if (this.armY <= this.armBottomY) {
           this.armY = this.armBottomY;
           this.crane.setReachedBottom();
@@ -153,6 +154,8 @@ export class CraneGameScene implements Scene {
         break;
       }
       case 'GRABBING': {
+        // Close the ring to grab
+        this.craneArm.close();
         const result = this.catchSystem.evaluate(
           this.crane.getPositionX(),
           this.crane.getPositionZ(),

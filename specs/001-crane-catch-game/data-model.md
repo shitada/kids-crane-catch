@@ -2,7 +2,7 @@
 
 **Phase**: 1 — Design & Contracts  
 **Date**: 2026-03-17  
-**Status**: Complete
+**Status**: Complete（差分更新: 3段階つかむ動作, BGM和音メロディ, 動物の目, 図鑑グリッド）
 
 ## Entities
 
@@ -141,11 +141,18 @@ class CraneArm {
   setPositionX(x: number): void;  // X軸位置設定
   setPositionZ(z: number): void;  // Z軸位置設定
   setArmY(y: number): void;       // アーム高さ設定
-  open(): void;   // リングを大きく（targetScale = 1.0）
-  close(): void;  // リングを小さく（targetScale = 0.3）
+  open(): void;   // リングを大きく（targetScale = 1.0）← DROPPING 開始時に呼ぶ
+  close(): void;  // リングを小さく（targetScale = 0.3）← GRABBING 時に呼ぶ
   update(deltaTime: number): void;
   dispose(): void;
 }
+```
+
+**3段階つかむ動作フロー（CraneGameScene.update から制御）**:
+```
+1. DROPPING 開始 → craneArm.open()  → リング径が拡大
+2. リング下降（armY 減少）→ armBottomY 到達
+3. GRABBING 開始 → craneArm.close() → リング径が縮小 → CatchSystem.evaluate()
 ```
 
 ### Collection（コレクション/図鑑）
@@ -197,7 +204,40 @@ interface SaveData {
   tutorialCompleted: boolean;
   settings: GameSettings;
 }
+```
 
+### BGMType（BGM種別）
+
+AudioManager で再生するBGMの種類を指定する型。
+
+```typescript
+type BGMType = 'title' | 'game';
+```
+
+### AudioManager（サウンド管理 — 更新）
+
+BGM を和音メロディシーケンスとして再生。フェードイン/アウト対応。
+
+```typescript
+class AudioManager {
+  playBGM(type: BGMType): void;   // 指定タイプのBGMメロディを開始（フェードイン付き）
+  stopBGM(): void;                 // BGMをフェードアウトして停止
+  // ... 他のメソッドは変更なし
+}
+```
+
+**BGM 内部構造**:
+```typescript
+interface MelodyNote {
+  readonly frequencies: readonly number[];  // 和音の周波数群（例: [261.63, 329.63, 392.00] = C-E-G）
+  readonly duration: number;                // ノート長（秒）
+}
+
+interface MelodyPattern {
+  readonly notes: readonly MelodyNote[];
+  readonly tempo: number;                   // BPM相当のテンポ係数
+}
+```
 interface GameSettings {
   bgmEnabled: boolean;
   sfxEnabled: boolean;

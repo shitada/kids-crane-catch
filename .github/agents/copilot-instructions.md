@@ -25,6 +25,7 @@ TypeScript 5.7+（strict モード必須）: Follow standard conventions
 
 ## Recent Changes
 - 001-crane-catch-game: Added TypeScript ^5.7.0（strict モード必須） + Three.js ^0.170.0
+- 001-crane-catch-game: Added TypeScript ^5.7.0（strict モード必須） + Three.js ^0.170.0
 
 - 001-crane-catch-game: Added TypeScript 5.7+（strict モード必須） + Three.js ^0.170.0, Vite ^6.0.0
 
