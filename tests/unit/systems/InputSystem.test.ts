@@ -19,7 +19,9 @@ describe('InputSystem', () => {
 
   describe('initial state', () => {
     it('should have neutral move direction', () => {
-      expect(input.getState().moveDirection).toBe(0);
+      const dir = input.getState().moveDirection;
+      expect(dir.x).toBe(0);
+      expect(dir.z).toBe(0);
     });
 
     it('should have catchPressed as false', () => {
@@ -28,20 +30,25 @@ describe('InputSystem', () => {
   });
 
   describe('moveDirection', () => {
-    it('should set moveDirection to -1 when left button pressed', () => {
-      input.setMoveDirection(-1);
-      expect(input.getState().moveDirection).toBe(-1);
+    it('should set moveDirection to left', () => {
+      input.setMoveDirection({ x: -1, z: 0 });
+      expect(input.getState().moveDirection).toEqual({ x: -1, z: 0 });
     });
 
-    it('should set moveDirection to 1 when right button pressed', () => {
-      input.setMoveDirection(1);
-      expect(input.getState().moveDirection).toBe(1);
+    it('should set moveDirection to right', () => {
+      input.setMoveDirection({ x: 1, z: 0 });
+      expect(input.getState().moveDirection).toEqual({ x: 1, z: 0 });
     });
 
-    it('should reset moveDirection to 0', () => {
-      input.setMoveDirection(1);
-      input.setMoveDirection(0);
-      expect(input.getState().moveDirection).toBe(0);
+    it('should set moveDirection to forward', () => {
+      input.setMoveDirection({ x: 0, z: -1 });
+      expect(input.getState().moveDirection).toEqual({ x: 0, z: -1 });
+    });
+
+    it('should reset moveDirection to neutral', () => {
+      input.setMoveDirection({ x: 1, z: 0 });
+      input.setMoveDirection({ x: 0, z: 0 });
+      expect(input.getState().moveDirection).toEqual({ x: 0, z: 0 });
     });
   });
 
@@ -64,7 +71,7 @@ describe('InputSystem', () => {
       const end = new PointerEvent('pointerup', { clientX: 100, clientY: 100 });
       container.dispatchEvent(start);
       container.dispatchEvent(end);
-      expect(input.getState().moveDirection).toBe(-1);
+      expect(input.getState().moveDirection).toEqual({ x: -1, z: 0 });
     });
 
     it('should detect right swipe', () => {
@@ -72,17 +79,25 @@ describe('InputSystem', () => {
       const end = new PointerEvent('pointerup', { clientX: 200, clientY: 100 });
       container.dispatchEvent(start);
       container.dispatchEvent(end);
-      expect(input.getState().moveDirection).toBe(1);
+      expect(input.getState().moveDirection).toEqual({ x: 1, z: 0 });
+    });
+
+    it('should detect up swipe', () => {
+      const start = new PointerEvent('pointerdown', { clientX: 100, clientY: 200 });
+      const end = new PointerEvent('pointerup', { clientX: 100, clientY: 100 });
+      container.dispatchEvent(start);
+      container.dispatchEvent(end);
+      expect(input.getState().moveDirection).toEqual({ x: 0, z: -1 });
     });
   });
 
   describe('reset', () => {
     it('should reset all input state', () => {
-      input.setMoveDirection(1);
+      input.setMoveDirection({ x: 1, z: 0 });
       input.setCatchPressed(true);
       input.reset();
       const state = input.getState();
-      expect(state.moveDirection).toBe(0);
+      expect(state.moveDirection).toEqual({ x: 0, z: 0 });
       expect(state.catchPressed).toBe(false);
     });
   });

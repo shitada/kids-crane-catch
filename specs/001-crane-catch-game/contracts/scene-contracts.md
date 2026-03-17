@@ -80,13 +80,13 @@ zukan ──「もどる」──→ title
 **表示要素**:
 - 3D クレーン筐体（上部レール + アーム + ガラスケース風枠）
 - 配置されたアイテム群（SpawnSystem が categoryId に基づきランダム配置）
-- 操作UI（左右ボタン + キャッチボタン）← HTML overlay
+- 操作UI（上下左右ボタン + キャッチボタン）← HTML overlay（十字配置）
 - チュートリアル（初回のみ、TutorialSystem 制御）
 
 **ゲームフロー**:
-1. 入場時: アイテムをランダム配置
-2. 操作フェーズ: クレーン左右移動
-3. キャッチ: ボタンタップ → アーム下降 → 掴み判定 → 上昇
+1. 入場時: アイテムをX-Z平面にランダム配置
+2. 操作フェーズ: クレーンを上下左右（X-Z 2軸）に移動
+3. キャッチ: ボタンタップ → リング下降 → X-Z 2D距離で掴み判定 → 上昇
 4. 結果判定: CatchSystem が成功/失敗を決定
 5. 遷移: result シーンへ
 
@@ -143,14 +143,20 @@ zukan ──「もどる」──→ title
 ### InputSystem
 
 ```typescript
+interface MoveDirection {
+  x: -1 | 0 | 1;  // 左: -1, なし: 0, 右: 1
+  z: -1 | 0 | 1;  // 手前: -1, なし: 0, 奥: 1
+}
+
 interface InputState {
-  moveDirection: -1 | 0 | 1;  // 左: -1, なし: 0, 右: 1
-  catchPressed: boolean;        // キャッチボタン押下
+  moveDirection: MoveDirection;  // X-Z 2軸方向
+  catchPressed: boolean;          // キャッチボタン押下
 }
 
 interface InputSystem {
   initialize(container: HTMLElement): void;
   getState(): InputState;
+  setMoveDirection(direction: MoveDirection): void;
   reset(): void;
   dispose(): void;
 }
@@ -161,11 +167,13 @@ interface InputSystem {
 ```typescript
 interface CatchSystem {
   /**
-   * クレーン位置とアイテム群からキャッチ判定を行う
+   * クレーンのX-Z位置とアイテム群からキャッチ判定を行う
+   * X-Z平面のユークリッド距離で判定
    * @returns キャッチ結果（成功時はアイテム情報含む）
    */
   evaluate(
     craneX: number,
+    craneZ: number,
     grabRadius: number,
     items: readonly SpawnedItem[],
     baseCatchRate: number,
@@ -179,7 +187,7 @@ interface CatchSystem {
 interface SpawnSystem {
   /**
    * カテゴリ内のアイテムからランダムに選択・配置
-   * @returns 配置されたアイテム群
+   * @returns 配置されたアイテム群（X-Z平面上にランダム配置）
    */
   spawnItems(
     categoryId: string,
@@ -187,6 +195,39 @@ interface SpawnSystem {
     areaWidth: number,
     areaDepth: number,
   ): SpawnedItem[];
+}
+```
+
+### PhysicsSystem
+
+```typescript
+interface PhysicsSystem {
+  /** X軸のみの移動（後方互換） */
+  moveHorizontal(currentX: number, direction: number, deltaTime: number): number;
+
+  /** X-Z 2軸移動 */
+  moveXZ(
+    currentX: number,
+    currentZ: number,
+    dirX: number,
+    dirZ: number,
+    deltaTime: number,
+  ): { x: number; z: number };
+
+  drop(currentY: number, deltaTime: number): number;
+  lift(currentY: number, deltaTime: number): number;
+}
+```
+
+### HUD
+
+```typescript
+interface HUD {
+  /** 上下左右 + キャッチの5ボタン（十字配置） */
+  onMove: ((direction: { x: -1 | 0 | 1; z: -1 | 0 | 1 }) => void) | null;
+  onCatch: (() => void) | null;
+  setCatchEnabled(enabled: boolean): void;
+  dispose(): void;
 }
 ```
 

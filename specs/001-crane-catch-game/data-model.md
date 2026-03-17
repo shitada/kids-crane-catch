@@ -81,31 +81,34 @@ interface PartDefinition {
 
 ### Crane（クレーン）
 
-ゲーム内の操作オブジェクト。ステートマシンで動作管理。
+ゲーム内の操作オブジェクト。ステートマシンで動作管理。X-Z 2軸で移動可能。
 
 | Field | Type | Description |
 |-------|------|-------------|
-| positionX | `number` | 水平位置 |
+| positionX | `number` | X軸位置（左右） |
+| positionZ | `number` | Z軸位置（上下/奥行き） |
 | state | `CraneState` | 現在の状態 |
-| armOpenAngle | `number` | アーム開き角度 |
+| ringScale | `number` | リングの直径スケール |
 | heldItem | `Item \| null` | 掴んでいるアイテム |
 
 ```typescript
 type CraneState =
   | 'IDLE'        // 待機中（移動可能）
   | 'MOVING'      // 移動中
-  | 'DROPPING'    // アーム下降中
-  | 'GRABBING'    // 掴み動作中
+  | 'DROPPING'    // リング下降中
+  | 'GRABBING'    // 掴み動作中（リング縮小）
   | 'LIFTING'     // 上昇中（アイテムあり/なし）
   | 'RETURNING';  // 初期位置に戻り中
 
 interface CraneConfig {
-  readonly moveSpeed: number;       // 水平移動速度
+  readonly moveSpeed: number;       // X-Z移動速度
   readonly dropSpeed: number;       // 下降速度
   readonly liftSpeed: number;       // 上昇速度
-  readonly minX: number;            // 左端制限
-  readonly maxX: number;            // 右端制限
-  readonly grabRadius: number;      // 掴み判定半径
+  readonly minX: number;            // X軸左端制限
+  readonly maxX: number;            // X軸右端制限
+  readonly minZ: number;            // Z軸手前制限
+  readonly maxZ: number;            // Z軸奥側制限
+  readonly grabRadius: number;      // 掴み判定半径（X-Z 2D距離）
   readonly baseCatchRate: number;   // 基本キャッチ成功率
 }
 ```
@@ -113,14 +116,36 @@ interface CraneConfig {
 **State Transitions**:
 
 ```
-IDLE → MOVING       (左右入力)
+IDLE → MOVING       (上下左右入力)
 MOVING → IDLE       (入力解除)
 IDLE → DROPPING     (キャッチボタン)
 MOVING → DROPPING   (キャッチボタン)
-DROPPING → GRABBING (アームが最下点到達)
+DROPPING → GRABBING (リングが最下点到達)
 GRABBING → LIFTING  (掴み判定完了)
 LIFTING → RETURNING (最上部到達)
 RETURNING → IDLE    (初期位置到達)
+```
+
+### CraneArm（クレーンアーム / リング）
+
+クレーンの視覚的表現。リング（TorusGeometry）形状のキャッチ機構。
+
+| Field | Type | Description |
+|-------|------|-------------|
+| ring | `THREE.Mesh` | リング形状メッシュ（TorusGeometry） |
+| ringScale | `number` | 現在のリングスケール |
+| targetRingScale | `number` | 目標リングスケール |
+
+```typescript
+class CraneArm {
+  setPositionX(x: number): void;  // X軸位置設定
+  setPositionZ(z: number): void;  // Z軸位置設定
+  setArmY(y: number): void;       // アーム高さ設定
+  open(): void;   // リングを大きく（targetScale = 1.0）
+  close(): void;  // リングを小さく（targetScale = 0.3）
+  update(deltaTime: number): void;
+  dispose(): void;
+}
 ```
 
 ### Collection（コレクション/図鑑）

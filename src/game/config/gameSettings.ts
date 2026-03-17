@@ -6,6 +6,8 @@ export const gameSettings: CraneConfig = {
   liftSpeed: 2.0,
   minX: -3.0,
   maxX: 3.0,
+  minZ: -1.5,
+  maxZ: 1.5,
   grabRadius: 0.8,
   baseCatchRate: 0.7,
 };

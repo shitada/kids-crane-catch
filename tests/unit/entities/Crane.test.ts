@@ -8,6 +8,8 @@ const config: CraneConfig = {
   liftSpeed: 2.0,
   minX: -3.0,
   maxX: 3.0,
+  minZ: -1.5,
+  maxZ: 1.5,
   grabRadius: 0.8,
   baseCatchRate: 0.7,
 };
@@ -35,13 +37,13 @@ describe('Crane', () => {
 
   describe('state transitions', () => {
     it('IDLE → MOVING on move input', () => {
-      crane.move(1);
+      crane.move({ x: 1, z: 0 });
       expect(crane.getState()).toBe('MOVING');
     });
 
     it('MOVING → IDLE on move release', () => {
-      crane.move(1);
-      crane.move(0);
+      crane.move({ x: 1, z: 0 });
+      crane.move({ x: 0, z: 0 });
       expect(crane.getState()).toBe('IDLE');
     });
 
@@ -51,7 +53,7 @@ describe('Crane', () => {
     });
 
     it('MOVING → DROPPING on catch press', () => {
-      crane.move(1);
+      crane.move({ x: 1, z: 0 });
       crane.startDrop();
       expect(crane.getState()).toBe('DROPPING');
     });
@@ -89,27 +91,39 @@ describe('Crane', () => {
 
   describe('movement', () => {
     it('should move right with positive direction', () => {
-      crane.move(1);
+      crane.move({ x: 1, z: 0 });
       crane.update(1.0);
       expect(crane.getPositionX()).toBeGreaterThan(0);
     });
 
     it('should move left with negative direction', () => {
-      crane.move(-1);
+      crane.move({ x: -1, z: 0 });
       crane.update(1.0);
       expect(crane.getPositionX()).toBeLessThan(0);
     });
 
     it('should not exceed maxX boundary', () => {
-      crane.move(1);
+      crane.move({ x: 1, z: 0 });
       crane.update(10.0);
       expect(crane.getPositionX()).toBeLessThanOrEqual(config.maxX);
     });
 
     it('should not exceed minX boundary', () => {
-      crane.move(-1);
+      crane.move({ x: -1, z: 0 });
       crane.update(10.0);
       expect(crane.getPositionX()).toBeGreaterThanOrEqual(config.minX);
+    });
+
+    it('should move forward with negative Z direction', () => {
+      crane.move({ x: 0, z: -1 });
+      crane.update(1.0);
+      expect(crane.getPositionZ()).toBeLessThan(0);
+    });
+
+    it('should not exceed maxZ boundary', () => {
+      crane.move({ x: 0, z: 1 });
+      crane.update(10.0);
+      expect(crane.getPositionZ()).toBeLessThanOrEqual(config.maxZ);
     });
   });
 

@@ -1,10 +1,11 @@
-import type { CraneState, CraneConfig, ItemDefinition } from '@/types/index';
+import type { CraneState, CraneConfig, ItemDefinition, MoveDirection } from '@/types/index';
 
 export class Crane {
   private state: CraneState = 'IDLE';
   private positionX = 0;
+  private positionZ = 0;
   private heldItem: ItemDefinition | null = null;
-  private moveDirection: -1 | 0 | 1 = 0;
+  private moveDir: MoveDirection = { x: 0, z: 0 };
 
   constructor(private config: CraneConfig) {}
 
@@ -16,19 +17,23 @@ export class Crane {
     return this.positionX;
   }
 
+  getPositionZ(): number {
+    return this.positionZ;
+  }
+
   getHeldItem(): ItemDefinition | null {
     return this.heldItem;
   }
 
-  move(direction: -1 | 0 | 1): void {
+  move(direction: MoveDirection): void {
     if (this.state !== 'IDLE' && this.state !== 'MOVING') return;
-    this.moveDirection = direction;
-    this.state = direction === 0 ? 'IDLE' : 'MOVING';
+    this.moveDir = { ...direction };
+    this.state = direction.x === 0 && direction.z === 0 ? 'IDLE' : 'MOVING';
   }
 
   startDrop(): void {
     if (this.state !== 'IDLE' && this.state !== 'MOVING') return;
-    this.moveDirection = 0;
+    this.moveDir = { x: 0, z: 0 };
     this.state = 'DROPPING';
   }
 
@@ -55,9 +60,15 @@ export class Crane {
   }
 
   update(deltaTime: number): void {
-    if (this.state === 'MOVING' && this.moveDirection !== 0) {
-      this.positionX += this.moveDirection * this.config.moveSpeed * deltaTime;
-      this.positionX = Math.max(this.config.minX, Math.min(this.config.maxX, this.positionX));
+    if (this.state === 'MOVING') {
+      if (this.moveDir.x !== 0) {
+        this.positionX += this.moveDir.x * this.config.moveSpeed * deltaTime;
+        this.positionX = Math.max(this.config.minX, Math.min(this.config.maxX, this.positionX));
+      }
+      if (this.moveDir.z !== 0) {
+        this.positionZ += this.moveDir.z * this.config.moveSpeed * deltaTime;
+        this.positionZ = Math.max(this.config.minZ, Math.min(this.config.maxZ, this.positionZ));
+      }
     }
   }
 }

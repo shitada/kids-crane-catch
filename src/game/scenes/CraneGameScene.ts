@@ -98,7 +98,7 @@ export class CraneGameScene implements Scene {
       this.hud = new HUD(app);
       this.hud.onMove = (dir) => {
         this.crane.move(dir);
-        if (dir !== 0) this.opts.audioManager.playSFX('craneMove');
+        if (dir.x !== 0 || dir.z !== 0) this.opts.audioManager.playSFX('craneMove');
       };
       this.hud.onCatch = () => {
         this.opts.audioManager.playSFX('armDrop');
@@ -140,6 +140,7 @@ export class CraneGameScene implements Scene {
 
     // Update arm position
     this.craneArm.setPositionX(this.crane.getPositionX());
+    this.craneArm.setPositionZ(this.crane.getPositionZ());
 
     switch (state) {
       case 'DROPPING': {
@@ -154,6 +155,7 @@ export class CraneGameScene implements Scene {
       case 'GRABBING': {
         const result = this.catchSystem.evaluate(
           this.crane.getPositionX(),
+          this.crane.getPositionZ(),
           gameSettings.grabRadius,
           this.spawnedItems,
           gameSettings.baseCatchRate,
@@ -184,7 +186,7 @@ export class CraneGameScene implements Scene {
 
         if (heldItem) {
           this.opts.saveManager.addToCollection(heldItem.id);
-          this.celebration.playSuccess(new THREE.Vector3(this.crane.getPositionX(), 3, 0));
+          this.celebration.playSuccess(new THREE.Vector3(this.crane.getPositionX(), 3, this.crane.getPositionZ()));
         } else {
           this.celebration.playFail();
         }

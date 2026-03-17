@@ -2,7 +2,7 @@
 
 **Phase**: 0 — Outline & Research  
 **Date**: 2026-03-17  
-**Status**: Complete
+**Status**: Complete（差分更新: 4方向移動 + リング形状）
 
 ## 1. Three.js クレーン物理演算アプローチ
 
@@ -188,3 +188,74 @@ interface SaveData {
 **Alternatives considered**:
 - Vercel/Netlify → GitHub Pages で十分。外部サービス依存を増やさない
 - 手動デプロイ → CI/CD を Constitution Quality Gates が要求
+
+## 10. クレーン4方向移動（X-Z 2軸）設計
+
+**Decision**: X軸のみ → X-Z 2軸移動に拡張。PhysicsSystem に moveXZ メソッド追加、InputState を2D方向オブジェクトに変更
+
+**Rationale**:
+- 仕様で「上下左右に動かして2D平面上で位置を決め」と明記されている（FR-002）
+- Z軸は「奥行き」に対応。Three.js の座標系で X=左右、Z=手前/奥が自然
+- CraneConfig に minZ/maxZ を追加するだけで範囲を設定可能（Data-Driven 原則に適合）
+- CatchSystem の距離判定を X-Z ユークリッド距離（`Math.sqrt(dx*dx + dz*dz)`）に変更
+- HUD は十字配置（上下左右＋中央キャッチ）で5歳児にも直感的
+
+**InputState 変更**:
+```typescript
+// Before
+interface InputState {
+  moveDirection: -1 | 0 | 1;
+  catchPressed: boolean;
+}
+
+// After
+interface InputState {
+  moveDirection: { x: -1 | 0 | 1; z: -1 | 0 | 1 };
+  catchPressed: boolean;
+}
+```
+
+**HUD レイアウト（十字配置）**:
+```
+        [▲]
+   [◀] [つかむ] [▶]
+        [▼]
+```
+
+**Alternatives considered**:
+- ジョイスティックUI → 5歳児には複雑すぎる。十字ボタンの方が直感的
+- X-Y平面移動（Y=上下）→ Three.js ではY=高さ方向。Z軸使用が3D空間として自然
+- `moveDirection` を `[number, number]` タプルに → `{ x, z }` の方が読みやすく型安全
+
+## 11. リング形状デザイン（TorusGeometry）
+
+**Decision**: CraneArm のツメ（ConeGeometry×2）→ リング（TorusGeometry×1）に変更。開閉はスケーリングで表現
+
+**Rationale**:
+- 仕様で「リング（丸い輪っか形状）」「包み込むように掴む」と明記されている（FR-003、Key Entities）
+- TorusGeometry は Three.js 標準ジオメトリで外部依存なし
+- スケーリングによる開閉:
+  - `open()`: scale を大きく（1.0）→ リングが大きく開いた状態でアイテムの上から被せる
+  - `close()`: scale を小さく（0.3）→ リングが縮小してアイテムを包み込む
+- ConeGeometry×2（左右のツメ）→ TorusGeometry×1 に減少し、パーツ数が減ってシンプル
+- 視覚的にも丸い輪っかは子供にとって「掴む」動作が分かりやすい
+
+**TorusGeometry パラメータ**:
+```typescript
+new THREE.TorusGeometry(
+  0.3,   // radius: リングの半径
+  0.06,  // tube: チューブの太さ
+  8,     // radialSegments: パフォーマンス考慮で低め
+  16     // tubularSegments: パフォーマンス考慮で低め
+);
+```
+
+**パフォーマンス影響**:
+- ConeGeometry(0.08, 0.5, 6) × 2 = 頂点数約28
+- TorusGeometry(0.3, 0.06, 8, 16) × 1 = 頂点数約144
+- 差は+116頂点で60fps維持に全く影響なし
+
+**Alternatives considered**:
+- ツメ形状維持（ConeGeometry）→ 仕様のリング要件を満たさない
+- RingGeometry（平面リング）→ 立体感がなくチープに見える。Torus の方が「輪っか」感がある
+- カスタムジオメトリ → 過剰。TorusGeometry で十分

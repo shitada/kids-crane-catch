@@ -31,14 +31,14 @@ describe('CatchSystem', () => {
   describe('evaluate', () => {
     it('should return failure when no items are in range', () => {
       const items = [makeItem('lion', 10)];
-      const result = system.evaluate(0, 0.8, items, 0.7);
+      const result = system.evaluate(0, 0, 0.8, items, 0.7);
       expect(result.success).toBe(false);
       expect(result.item).toBeNull();
     });
 
     it('should find item within grab radius (deterministic with high catch rate)', () => {
       const items = [makeItem('lion', 0.3, 0.0)];
-      const result = system.evaluate(0, 0.8, items, 1.0);
+      const result = system.evaluate(0, 0, 0.8, items, 1.0);
       expect(result.success).toBe(true);
       expect(result.item?.id).toBe('lion');
     });
@@ -48,14 +48,14 @@ describe('CatchSystem', () => {
         makeItem('far', 0.7, 0.0),
         makeItem('close', 0.1, 0.0),
       ];
-      const result = system.evaluate(0, 0.8, items, 1.0);
+      const result = system.evaluate(0, 0, 0.8, items, 1.0);
       expect(result.item?.id).toBe('close');
     });
 
     it('should consider catchDifficulty in success rate', () => {
       // With difficulty 1.0 and baseCatchRate 0.0, should always fail
       const items = [makeItem('lion', 0.1, 1.0)];
-      const result = system.evaluate(0, 0.8, items, 0.0);
+      const result = system.evaluate(0, 0, 0.8, items, 0.0);
       expect(result.success).toBe(false);
     });
   });

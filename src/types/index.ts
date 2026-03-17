@@ -33,6 +33,8 @@ export interface CraneConfig {
   readonly liftSpeed: number;
   readonly minX: number;
   readonly maxX: number;
+  readonly minZ: number;
+  readonly maxZ: number;
   readonly grabRadius: number;
   readonly baseCatchRate: number;
 }
@@ -121,8 +123,13 @@ export interface SaveData {
 
 // === Input ===
 
+export interface MoveDirection {
+  x: -1 | 0 | 1;
+  z: -1 | 0 | 1;
+}
+
 export interface InputState {
-  moveDirection: -1 | 0 | 1;
+  moveDirection: MoveDirection;
   catchPressed: boolean;
 }
 

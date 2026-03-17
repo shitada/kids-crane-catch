@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { HUD } from '@/ui/HUD';
+import type { MoveDirection } from '@/types/index';
 
 describe('HUD', () => {
   let hud: HUD;
@@ -27,6 +28,16 @@ describe('HUD', () => {
       expect(btn).not.toBeNull();
     });
 
+    it('should create up button', () => {
+      const btn = container.querySelector('[data-action="up"]');
+      expect(btn).not.toBeNull();
+    });
+
+    it('should create down button', () => {
+      const btn = container.querySelector('[data-action="down"]');
+      expect(btn).not.toBeNull();
+    });
+
     it('should create catch button', () => {
       const btn = container.querySelector('[data-action="catch"]');
       expect(btn).not.toBeNull();
@@ -34,25 +45,33 @@ describe('HUD', () => {
 
     it('buttons should have minimum touch target size', () => {
       const buttons = container.querySelectorAll('button');
-      expect(buttons.length).toBeGreaterThanOrEqual(3);
+      expect(buttons.length).toBeGreaterThanOrEqual(5);
     });
   });
 
   describe('events', () => {
-    it('should call onMove with -1 on left button press', () => {
-      let direction = 0;
+    it('should call onMove with left direction on left button press', () => {
+      let direction: MoveDirection | null = null;
       hud.onMove = (d) => { direction = d; };
       const btn = container.querySelector('[data-action="left"]') as HTMLElement;
       btn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-      expect(direction).toBe(-1);
+      expect(direction).toEqual({ x: -1, z: 0 });
     });
 
-    it('should call onMove with 1 on right button press', () => {
-      let direction = 0;
+    it('should call onMove with right direction on right button press', () => {
+      let direction: MoveDirection | null = null;
       hud.onMove = (d) => { direction = d; };
       const btn = container.querySelector('[data-action="right"]') as HTMLElement;
       btn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
-      expect(direction).toBe(1);
+      expect(direction).toEqual({ x: 1, z: 0 });
+    });
+
+    it('should call onMove with up direction on up button press', () => {
+      let direction: MoveDirection | null = null;
+      hud.onMove = (d) => { direction = d; };
+      const btn = container.querySelector('[data-action="up"]') as HTMLElement;
+      btn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+      expect(direction).toEqual({ x: 0, z: -1 });
     });
 
     it('should call onCatch on catch button tap', () => {

@@ -3,19 +3,22 @@ import type { SpawnedItem, CatchResult } from '@/types/index';
 export class CatchSystem {
   evaluate(
     craneX: number,
+    craneZ: number,
     grabRadius: number,
     items: readonly SpawnedItem[],
     baseCatchRate: number,
   ): CatchResult {
-    // Find items within grab radius
+    // Find items within grab radius (2D distance on X-Z plane)
     let closest: SpawnedItem | null = null;
     let closestDist = Infinity;
 
     for (const item of items) {
-      const dx = Math.abs(item.position.x - craneX);
-      if (dx <= grabRadius && dx < closestDist) {
+      const dx = item.position.x - craneX;
+      const dz = item.position.z - craneZ;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+      if (dist <= grabRadius && dist < closestDist) {
         closest = item;
-        closestDist = dx;
+        closestDist = dist;
       }
     }
 

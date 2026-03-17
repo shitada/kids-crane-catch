@@ -1,49 +1,53 @@
-# Implementation Plan: クレーンキャッチゲーム（Crane Catch Game）
+# Implementation Plan: クレーンキャッチゲーム
 
 **Branch**: `001-crane-catch-game` | **Date**: 2026-03-17 | **Spec**: [spec.md](spec.md)
 **Input**: Feature specification from `/specs/001-crane-catch-game/spec.md`
 
+**Note**: 差分更新 — クレーン4方向移動拡張 + リング形状デザイン変更を反映。
+
 ## Summary
 
-ゲームセンターのクレーンキャッチャーを再現した5〜10歳向け教育ゲーム。Three.jsによる3Dクレーン操作でアイテムをキャッチし、図鑑にコレクションする。初期カテゴリは「どうぶつ」8種。全アセット（3Dモデル・サウンド）はプロシージャル生成。データ駆動設計によりカテゴリ追加時にコアロジック変更不要。universe-kids-raceのプロジェクト構成・デザインを踏襲し、よりポップな配色で展開。
+ゲームセンターのクレーンキャッチャーを再現した5〜10歳向け教育ゲーム。TypeScript + Three.js + Vite 構成で、プロシージャル3Dモデル・サウンド生成、データ駆動カテゴリ設計を採用。本更新では以下2点を実装計画に反映する:
+
+1. **クレーン4方向移動**: X軸のみ → X-Z 2軸移動に拡張。CraneConfig に minZ/maxZ 追加、InputState を2D方向に変更、CatchSystem で2D距離判定に移行。
+2. **リング形状デザイン**: CraneArm のツメ（ConeGeometry）→ リング（TorusGeometry）に変更。開閉はスケーリングで直径を変化させアイテムを包み込む動作を表現。
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.7+（strict モード必須）  
-**Primary Dependencies**: Three.js ^0.170.0, Vite ^6.0.0  
-**Storage**: ブラウザ localStorage（図鑑コレクション・チュートリアル完了状態の永続化）  
-**Testing**: Vitest ^3.0.0 + jsdom ^28.1.0  
-**Target Platform**: iPad Safari 横向き最優先、モダンブラウザ（Chrome, Firefox, Edge）  
-**Project Type**: Web ゲームアプリケーション（SPA）  
-**Performance Goals**: 60fps 安定維持、初回ロード 3秒以内  
-**Constraints**: 外部アセットファイル不使用（3D・音声すべてプロシージャル生成）、課金要素・広告・外部リンク禁止、オフラインプレイ対応  
-**Scale/Scope**: 5画面（タイトル・カテゴリ選択・クレーンゲーム・結果・図鑑）、初期8アイテム、将来カテゴリ拡張対応
+**Language/Version**: TypeScript ^5.7.0（strict モード必須）
+**Primary Dependencies**: Three.js ^0.170.0
+**Build Tool**: Vite ^6.0.0
+**Storage**: localStorage（SaveManager でバージョニング付きJSON）
+**Testing**: Vitest ^3.0.0 + jsdom ^28.1.0
+**Target Platform**: iPad Safari 横向き（モダンブラウザもサポート）
+**Project Type**: web-game（SPA、GitHub Pages デプロイ）
+**Performance Goals**: 60fps 安定維持
+**Constraints**: 外部3Dファイル/音声ファイル不使用、ひらがなUIのみ、課金/広告なし
+**Scale/Scope**: 初期「どうぶつ」カテゴリ8種、5画面（タイトル/カテゴリ選択/クレーンゲーム/結果/図鑑）
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-| # | Principle | Check | Status |
-|---|-----------|-------|--------|
-| I | TDD（NON-NEGOTIABLE） | Vitest + jsdom でテスト先行開発。ゲームロジック・状態管理のユニットテスト。Three.js依存部はモックで検証 | ✅ PASS |
-| II | Data-Driven Extensibility | カテゴリ・アイテムは宣言的データ定義。Registry パターンで動的登録。コアロジック変更不要で新カテゴリ追加可能 | ✅ PASS |
-| III | Child-First UI/UX | ひらがなUI、iPad Safari横向き最適化、44x44pt以上のボタン、ポジティブなフィードバック、universe-kids-raceデザイン踏襲 | ✅ PASS |
-| IV | Performance & Quality | プロシージャル生成で軽量アセット、ジオメトリ・マテリアル再利用、RAFベースゲームループ、適切なdispose | ✅ PASS |
-| V | Safety & Education | 安全な教育コンテンツのみ、課金・広告・外部リンクなし、動物知識の学習要素、色覚多様性対応 | ✅ PASS |
+### Pre-Design Check
 
-**Gate Result**: ✅ ALL PASS — Phase 0 に進行可能
+| Principle | Status | Notes |
+|-----------|--------|-------|
+| I. TDD (NON-NEGOTIABLE) | ✅ PASS | 全変更に対しテスト先行で実装。Crane.test.ts, PhysicsSystem.test.ts, CatchSystem.test.ts, InputSystem.test.ts, HUD.test.ts, CraneArm は Three.js モック環境で検証 |
+| II. Data-Driven Extensibility | ✅ PASS | CraneConfig へのフィールド追加のみ。カテゴリ/アイテムのデータ駆動設計に影響なし |
+| III. Child-First UI/UX | ✅ PASS | 上下ボタン追加で操作が増えるが、十分な大きさ（44x44pt以上）を維持。リング形状はアームより視覚的に分かりやすい |
+| IV. Performance & Quality | ✅ PASS | TorusGeometry は ConeGeometry と同程度の頂点数。Z軸追加は演算コスト微増だが60fps維持に影響なし |
+| V. Safety & Education | ✅ PASS | UI/UX変更のみ、コンテンツに影響なし |
 
-### Post-Design Re-check (Phase 1 完了後)
+### Post-Design Check
 
-| # | Principle | Re-check | Status |
-|---|-----------|----------|--------|
-| I | TDD | テスト構造定義済み（unit/ + integration/）。全 System・Entity・Scene にテストファイル対応 | ✅ PASS |
-| II | Data-Driven | Registry パターン + config/ 定義ファイルで設計完了。新カテゴリ追加フロー検証済み | ✅ PASS |
-| III | Child-First | Scene Contracts で全画面のひらがなUI・ボタン配置・ポジティブメッセージを明記 | ✅ PASS |
-| IV | Performance | Tween ベースアニメーション（物理エンジン不使用）、プロシージャル生成、メモリ管理戦略を research.md で確定 | ✅ PASS |
-| V | Safety | 全メッセージがポジティブ表現。課金・外部リンクなし。教育要素（動物知識）をデータモデルに組み込み | ✅ PASS |
-
-**Post-Design Gate Result**: ✅ ALL PASS
+| Principle | Status | Notes |
+|-----------|--------|-------|
+| I. TDD | ✅ PASS | 変更対象の全ファイル（7ファイル）にテスト更新を計画 |
+| II. Data-Driven | ✅ PASS | gameSettings.ts に minZ/maxZ を追加するだけでZ軸範囲を設定可能 |
+| III. Child-First | ✅ PASS | HUDレイアウトは十字配置（上下左右＋中央キャッチ）で直感的 |
+| IV. Performance | ✅ PASS | TorusGeometry(0.3, 0.06, 8, 16) は軽量。距離計算は Math.sqrt 1回追加のみ |
+| V. Safety | ✅ PASS | 変更なし |
 
 ## Project Structure
 
@@ -51,12 +55,14 @@
 
 ```text
 specs/001-crane-catch-game/
-├── plan.md              # This file
-├── research.md          # Phase 0: 技術調査結果
-├── data-model.md        # Phase 1: エンティティ・データモデル
-├── quickstart.md        # Phase 1: 開発クイックスタート
-├── contracts/           # Phase 1: インターフェース定義
-│   └── scene-contracts.md
+├── plan.md              # This file (差分更新済み)
+├── research.md          # Phase 0 output (更新済み)
+├── data-model.md        # Phase 1 output (更新済み)
+├── quickstart.md        # Phase 1 output
+├── contracts/
+│   └── scene-contracts.md  # Phase 1 output (更新済み)
+├── checklists/
+│   └── requirements.md
 └── tasks.md             # Phase 2 output (/speckit.tasks command)
 ```
 
@@ -64,87 +70,88 @@ specs/001-crane-catch-game/
 
 ```text
 src/
-├── main.ts                          # エントリポイント（Three.js初期化・シーン登録）
-├── types/
-│   └── index.ts                     # 型定義（Scene, Entity, Config等）
+├── main.ts                          # エントリポイント
+├── types/index.ts                   # 共通型定義 ← InputState, CraneConfig 変更
 ├── game/
-│   ├── GameLoop.ts                  # RAFベースゲームループ
-│   ├── SceneManager.ts              # シーン遷移管理
+│   ├── GameLoop.ts
+│   ├── SceneManager.ts
 │   ├── audio/
-│   │   └── AudioManager.ts          # Web Audio API サウンド生成・管理
+│   │   └── AudioManager.ts
 │   ├── config/
-│   │   ├── categories.ts            # カテゴリ定義（データ駆動）
-│   │   ├── items.ts                 # アイテム定義（どうぶつ8種 etc.）
-│   │   └── gameSettings.ts          # ゲーム設定（クレーン速度・判定範囲等）
+│   │   ├── categories.ts
+│   │   ├── gameSettings.ts          # ← minZ/maxZ 追加
+│   │   └── items.ts
 │   ├── effects/
-│   │   ├── CatchCelebration.ts      # キャッチ成功エフェクト
-│   │   └── ParticleEffect.ts        # 汎用パーティクル
+│   │   ├── CatchCelebration.ts
+│   │   └── ParticleEffect.ts
 │   ├── entities/
-│   │   ├── Crane.ts                 # クレーン（アーム・レール・状態管理）
-│   │   ├── CraneArm.ts             # アームの3Dモデル・アニメーション
-│   │   ├── ItemFactory.ts           # アイテム3Dモデル プロシージャル生成
+│   │   ├── Crane.ts                 # ← positionZ, moveDirection 2軸化
+│   │   ├── CraneArm.ts             # ← リング形状化, setPositionZ 追加
+│   │   ├── ItemFactory.ts
 │   │   └── registry/
-│   │       ├── ItemRegistry.ts      # アイテムRegistryパターン
-│   │       └── CategoryRegistry.ts  # カテゴリRegistryパターン
+│   │       ├── CategoryRegistry.ts
+│   │       └── ItemRegistry.ts
 │   ├── scenes/
-│   │   ├── TitleScene.ts            # タイトル画面
-│   │   ├── CategorySelectScene.ts   # カテゴリ選択画面
-│   │   ├── CraneGameScene.ts        # クレーンゲーム本体
-│   │   ├── ResultScene.ts           # 結果画面
-│   │   └── ZukanScene.ts            # 図鑑画面
+│   │   ├── CategorySelectScene.ts
+│   │   ├── CraneGameScene.ts        # ← Z軸移動・リング連携
+│   │   ├── ResultScene.ts
+│   │   ├── TitleScene.ts
+│   │   └── ZukanScene.ts
 │   ├── storage/
-│   │   └── SaveManager.ts           # localStorage永続化
+│   │   └── SaveManager.ts
 │   └── systems/
-│       ├── InputSystem.ts           # タッチ入力処理
-│       ├── PhysicsSystem.ts         # クレーン・アイテムの物理演算
-│       ├── CatchSystem.ts           # キャッチ判定ロジック
-│       ├── SpawnSystem.ts           # アイテム配置（ランダム化）
-│       └── TutorialSystem.ts        # チュートリアル制御
+│       ├── CatchSystem.ts           # ← X-Z 2D距離判定
+│       ├── InputSystem.ts           # ← 上下入力対応
+│       ├── PhysicsSystem.ts         # ← moveXZ 追加
+│       ├── SpawnSystem.ts
+│       └── TutorialSystem.ts
 └── ui/
-    ├── HUD.ts                       # ゲーム中UI（キャッチボタン等）
-    ├── TutorialOverlay.ts           # チュートリアルオーバーレイ
-    ├── OrientationGuard.ts          # 縦横検知・回転促進メッセージ
-    └── ZukanOverlay.ts              # 図鑑詳細オーバーレイ
+    ├── HUD.ts                       # ← 上下ボタン追加
+    ├── OrientationGuard.ts
+    ├── TutorialOverlay.ts
+    └── ZukanOverlay.ts
 
 tests/
 ├── unit/
-│   ├── config/
-│   │   ├── categories.test.ts
-│   │   └── items.test.ts
 │   ├── entities/
-│   │   ├── Crane.test.ts
-│   │   ├── ItemFactory.test.ts
-│   │   └── registry/
-│   │       ├── ItemRegistry.test.ts
-│   │       └── CategoryRegistry.test.ts
-│   ├── scenes/
-│   │   ├── TitleScene.test.ts
-│   │   ├── CategorySelectScene.test.ts
-│   │   ├── CraneGameScene.test.ts
-│   │   ├── ResultScene.test.ts
-│   │   └── ZukanScene.test.ts
-│   ├── storage/
-│   │   └── SaveManager.test.ts
+│   │   └── Crane.test.ts            # ← Z軸移動テスト追加
 │   ├── systems/
-│   │   ├── InputSystem.test.ts
-│   │   ├── PhysicsSystem.test.ts
-│   │   ├── CatchSystem.test.ts
-│   │   ├── SpawnSystem.test.ts
-│   │   └── TutorialSystem.test.ts
-│   ├── audio/
-│   │   └── AudioManager.test.ts
+│   │   ├── CatchSystem.test.ts      # ← 2D距離判定テスト追加
+│   │   ├── InputSystem.test.ts      # ← 上下入力テスト追加
+│   │   └── PhysicsSystem.test.ts    # ← moveXZ テスト追加
 │   └── ui/
-│       ├── HUD.test.ts
-│       ├── TutorialOverlay.test.ts
-│       └── OrientationGuard.test.ts
+│       └── HUD.test.ts              # ← 上下ボタンテスト追加
 └── integration/
-    ├── CraneGameFlow.test.ts
-    ├── CollectionFlow.test.ts
-    └── SceneTransition.test.ts
+    └── CraneGameFlow.test.ts        # ← 4方向移動フロー追加
 ```
 
-**Structure Decision**: universe-kids-race のプロジェクト構成を踏襲。`src/game/` 配下に audio, config, effects, entities, scenes, storage, systems を配置。UIは `src/ui/` 配下。テストは `tests/unit/` と `tests/integration/` に分離。クレーンゲーム固有のモジュール（CatchSystem, PhysicsSystem, ItemFactory, Registry）を追加。
+**Structure Decision**: 既存構造を維持。新ファイル追加なし、既存ファイルの変更のみ。
+
+## Change Summary
+
+### 変更1: クレーン4方向移動（X-Z 2軸）
+
+| File | Change |
+|------|--------|
+| `src/types/index.ts` | `CraneConfig` に `minZ`, `maxZ` 追加。`InputState.moveDirection` を `{ x: -1\|0\|1, z: -1\|0\|1 }` に変更 |
+| `src/game/config/gameSettings.ts` | `minZ: -1.5`, `maxZ: 1.5` 追加 |
+| `src/game/entities/Crane.ts` | `positionZ` フィールド追加、`move()` を2軸方向に対応、`update()` でZ軸移動処理追加、`getPositionZ()` 追加 |
+| `src/game/systems/PhysicsSystem.ts` | `moveXZ(currentX, currentZ, dirX, dirZ, deltaTime)` メソッド追加（`moveHorizontal` は後方互換のため残す） |
+| `src/game/systems/InputSystem.ts` | `moveDirection` を `{ x, z }` で管理、上下スワイプ検出追加 |
+| `src/game/systems/CatchSystem.ts` | `evaluate()` に `craneZ` パラメータ追加、X-Z 平面の2D ユークリッド距離で判定 |
+| `src/ui/HUD.ts` | 上下ボタン（▲ ▼）追加、`onMove` コールバックを `(direction: { x: -1\|0\|1, z: -1\|0\|1 }) => void` に変更 |
+| `src/game/entities/CraneArm.ts` | `setPositionZ(z: number)` メソッド追加 |
+
+### 変更2: リング形状デザイン
+
+| File | Change |
+|------|--------|
+| `src/game/entities/CraneArm.ts` | `clawLeft`/`clawRight` を `ring: THREE.Mesh`（TorusGeometry）に変更。`open()` でスケールを大きく、`close()` でスケールを小さくする |
 
 ## Complexity Tracking
 
-> Constitution Check に違反なし。追加の正当化は不要。
+> 変更は既存ファイルの修正のみで完結し、新規抽象化・パターン追加なし。Constitution 違反なし。
+
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| (なし) | — | — |

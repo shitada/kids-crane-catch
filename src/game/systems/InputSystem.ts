@@ -1,11 +1,12 @@
-import type { InputState } from '@/types/index';
+import type { InputState, MoveDirection } from '@/types/index';
 
 const SWIPE_THRESHOLD = 50;
 
 export class InputSystem {
-  private state: InputState = { moveDirection: 0, catchPressed: false };
+  private state: InputState = { moveDirection: { x: 0, z: 0 }, catchPressed: false };
   private container: HTMLElement | null = null;
   private pointerStartX = 0;
+  private pointerStartY = 0;
   private onPointerDown: ((e: PointerEvent) => void) | null = null;
   private onPointerUp: ((e: PointerEvent) => void) | null = null;
 
@@ -14,12 +15,18 @@ export class InputSystem {
 
     this.onPointerDown = (e: PointerEvent) => {
       this.pointerStartX = e.clientX;
+      this.pointerStartY = e.clientY;
     };
 
     this.onPointerUp = (e: PointerEvent) => {
       const dx = e.clientX - this.pointerStartX;
-      if (Math.abs(dx) >= SWIPE_THRESHOLD) {
-        this.state.moveDirection = dx < 0 ? -1 : 1;
+      const dy = e.clientY - this.pointerStartY;
+      if (Math.abs(dx) >= SWIPE_THRESHOLD || Math.abs(dy) >= SWIPE_THRESHOLD) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          this.state.moveDirection = { x: dx < 0 ? -1 : 1, z: 0 };
+        } else {
+          this.state.moveDirection = { x: 0, z: dy < 0 ? -1 : 1 };
+        }
       }
     };
 
@@ -28,11 +35,11 @@ export class InputSystem {
   }
 
   getState(): InputState {
-    return { ...this.state };
+    return { moveDirection: { ...this.state.moveDirection }, catchPressed: this.state.catchPressed };
   }
 
-  setMoveDirection(direction: -1 | 0 | 1): void {
-    this.state.moveDirection = direction;
+  setMoveDirection(direction: MoveDirection): void {
+    this.state.moveDirection = { ...direction };
   }
 
   setCatchPressed(pressed: boolean): void {
@@ -40,7 +47,7 @@ export class InputSystem {
   }
 
   reset(): void {
-    this.state.moveDirection = 0;
+    this.state.moveDirection = { x: 0, z: 0 };
     this.state.catchPressed = false;
   }
 
