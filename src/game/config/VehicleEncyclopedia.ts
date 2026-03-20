@@ -1,0 +1,68 @@
+import type { EncyclopediaEntry } from '../../types';
+
+export const VEHICLE_ENCYCLOPEDIA: EncyclopediaEntry[] = [
+  {
+    id: 'shinkansen',
+    name: 'しんかんせん',
+    emoji: '🚄',
+    trivia: 'はやさ320キロ！にほんで いちばん はやい でんしゃだよ。はなが ながくて かっこいいね！',
+    themeColor: 0x0072CE,
+    soundType: 'shinkansen',
+  },
+  {
+    id: 'airplane',
+    name: 'ひこうき',
+    emoji: '✈️',
+    trivia: 'そらを とぶよ！いちばん はやい ひこうきは おとより はやいんだ。つばさが おおきいね！',
+    themeColor: 0x87CEEB,
+    soundType: 'airplane',
+  },
+  {
+    id: 'bus',
+    name: 'バス',
+    emoji: '🚌',
+    trivia: 'たくさんの ひとを のせて まちを はしるよ。がっこうの えんそくでも のるよね！',
+    themeColor: 0xFF8C00,
+    soundType: 'bus',
+  },
+  {
+    id: 'policeCar',
+    name: 'パトカー',
+    emoji: '🚔',
+    trivia: 'わるいことを する ひとを つかまえるよ。サイレンが なったら みちを あけてね！',
+    themeColor: 0x1C1C1C,
+    soundType: 'policeCar',
+  },
+  {
+    id: 'excavator',
+    name: 'ショベルカー',
+    emoji: '🏗️',
+    trivia: 'つちを ほったり ものを はこんだり するよ。こうじげんばで はたらく ちからもちだよ！',
+    themeColor: 0xFFD700,
+    soundType: 'excavator',
+  },
+  {
+    id: 'helicopter',
+    name: 'ヘリコプター',
+    emoji: '🚁',
+    trivia: 'プロペラを まわして そらを とぶよ。たてにも よこにも うごけるんだ。すごいでしょ！',
+    themeColor: 0x2E8B57,
+    soundType: 'helicopter',
+  },
+  {
+    id: 'rocket',
+    name: 'ロケット',
+    emoji: '🚀',
+    trivia: 'うちゅうに いくための のりものだよ！すごい スピードで そらに とんでいくよ！',
+    themeColor: 0xFF4500,
+    soundType: 'rocket',
+  },
+  {
+    id: 'ship',
+    name: 'ふね',
+    emoji: '🚢',
+    trivia: 'うみを わたる おおきな のりものだよ。にもつや ひとを はこぶよ。ボーっと きてきが なるよ！',
+    themeColor: 0x4169E1,
+    soundType: 'ship',
+  },
+];
