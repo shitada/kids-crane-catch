@@ -33,7 +33,10 @@ export class CraneArm {
   onGrabComplete: ((pos: THREE.Vector3) => void) | null = null;
   onReturnComplete: (() => void) | null = null;
 
-  constructor() {
+  private armColor: number;
+
+  constructor(themeColor?: number) {
+    this.armColor = themeColor ?? 0xffcc00;
     this.buildCarriage();
     this.wire = this.buildWire();
     this.buildClaw();
@@ -93,7 +96,7 @@ export class CraneArm {
 
   /** 1本のアーム：上腕→肘球→前腕→フック＋赤ゴム */
   private buildArmAssembly(armGroup: THREE.Group, side: number): void {
-    const armMat = new THREE.MeshPhongMaterial({ color: 0xffcc00, shininess: 80 });
+    const armMat = new THREE.MeshPhongMaterial({ color: this.armColor, shininess: 80 });
     const jointMat = new THREE.MeshPhongMaterial({ color: 0xdddddd, shininess: 80 });
     const tipMat = new THREE.MeshPhongMaterial({ color: 0xffaa00, shininess: 60 });
     const rubberMat = new THREE.MeshPhongMaterial({ color: 0xdd3333, shininess: 20 });

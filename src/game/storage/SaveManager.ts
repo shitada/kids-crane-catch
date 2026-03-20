@@ -26,6 +26,13 @@ export class SaveManager {
       data.collectedVehicles.push(vehicleId);
     }
     data.catchCounts[vehicleId] = (data.catchCounts[vehicleId] ?? 0) + 1;
+    data.totalCatches = (data.totalCatches ?? 0) + 1;
+    this.save(data);
+  }
+
+  incrementPlays(): void {
+    const data = this.load();
+    data.totalPlays = (data.totalPlays ?? 0) + 1;
     this.save(data);
   }
 
@@ -38,17 +45,16 @@ export class SaveManager {
   }
 
   private defaultData(): SaveData {
-    return { collectedVehicles: [], catchCounts: {} };
+    return { collectedVehicles: [], catchCounts: {}, totalPlays: 0, totalCatches: 0 };
   }
 
   private isValid(data: unknown): data is SaveData {
     if (typeof data !== 'object' || data === null) return false;
     const d = data as Record<string, unknown>;
     if (!Array.isArray(d.collectedVehicles)) return false;
-    // Migrate old data without catchCounts
-    if (!d.catchCounts || typeof d.catchCounts !== 'object') {
-      d.catchCounts = {};
-    }
+    if (!d.catchCounts || typeof d.catchCounts !== 'object') d.catchCounts = {};
+    if (typeof d.totalPlays !== 'number') d.totalPlays = 0;
+    if (typeof d.totalCatches !== 'number') d.totalCatches = 0;
     return d.collectedVehicles.every((v: unknown) => typeof v === 'string');
   }
 }

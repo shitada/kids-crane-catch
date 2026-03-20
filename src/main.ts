@@ -26,7 +26,7 @@ const sfx = new SFXGenerator(audioManager);
 
 // Create scenes
 const titleScene = new TitleScene(sceneManager, audioManager, saveManager, sfx);
-const machineSelectScene = new MachineSelectScene(sceneManager, audioManager, sfx);
+const machineSelectScene = new MachineSelectScene(sceneManager, audioManager, sfx, saveManager);
 const playScene = new PlayScene(sceneManager, audioManager, sfx, saveManager);
 const resultScene = new ResultScene(sceneManager, audioManager, sfx, saveManager);
 const encyclopediaScene = new EncyclopediaScene(sceneManager, saveManager, sfx, audioManager);

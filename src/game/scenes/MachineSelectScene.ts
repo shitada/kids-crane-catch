@@ -3,7 +3,9 @@ import type { Scene, SceneContext } from '../../types';
 import type { SceneManager } from '../SceneManager';
 import type { AudioManager } from '../audio/AudioManager';
 import type { SFXGenerator } from '../audio/SFXGenerator';
+import type { SaveManager } from '../storage/SaveManager';
 import { MACHINES } from '../config/MachineConfig';
+import { ALL_ENCYCLOPEDIA } from '../config/VehicleEncyclopedia';
 
 export class MachineSelectScene implements Scene {
   private scene = new THREE.Scene();
@@ -11,12 +13,14 @@ export class MachineSelectScene implements Scene {
   private sceneManager: SceneManager;
   private audioManager: AudioManager;
   private sfx: SFXGenerator;
+  private saveManager: SaveManager;
   private overlay: HTMLDivElement | null = null;
 
-  constructor(sceneManager: SceneManager, audioManager: AudioManager, sfx: SFXGenerator) {
+  constructor(sceneManager: SceneManager, audioManager: AudioManager, sfx: SFXGenerator, saveManager: SaveManager) {
     this.sceneManager = sceneManager;
     this.audioManager = audioManager;
     this.sfx = sfx;
+    this.saveManager = saveManager;
 
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
     this.camera.position.set(0, 3, 8);
@@ -73,9 +77,15 @@ export class MachineSelectScene implements Scene {
     for (const machine of MACHINES) {
       const card = document.createElement('div');
       const colorHex = '#' + machine.themeColor.toString(16).padStart(6, '0');
+      const saveData = this.saveManager.load();
+      const catEntries = ALL_ENCYCLOPEDIA[machine.id] ?? [];
+      const collected = catEntries.filter(e => saveData.collectedVehicles.includes(e.id)).length;
+      const total = catEntries.length;
+      const isComplete = collected >= total && total > 0;
+      const pct = total > 0 ? (collected / total) * 100 : 0;
       card.style.cssText = `
         background: linear-gradient(135deg, ${colorHex}88, ${colorHex}44);
-        border: 2px solid ${colorHex};
+        border: 2px solid ${isComplete ? '#FFD700' : colorHex};
         border-radius: 16px;
         padding: 1rem 0.8rem;
         text-align: center;
@@ -86,9 +96,12 @@ export class MachineSelectScene implements Scene {
       `;
 
       card.innerHTML = `
-        <div style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.3rem;">${machine.emoji}</div>
+        <div style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.3rem;">${isComplete ? '🏆' : machine.emoji}</div>
         <div style="color: #FFD700; font-size: clamp(0.9rem, 2.5vw, 1.2rem); font-weight: 900; margin-bottom: 0.2rem;">${machine.name}</div>
-        <div style="color: #fff; font-size: clamp(0.6rem, 1.5vw, 0.8rem);">${machine.description}</div>
+        <div style="color: #fff; font-size: clamp(0.6rem, 1.5vw, 0.7rem); margin-bottom: 0.3rem;">${collected}/${total}</div>
+        <div style="background: rgba(0,0,0,0.3); border-radius: 4px; height: 6px; width: 100%; overflow: hidden;">
+          <div style="background: ${isComplete ? '#FFD700' : colorHex}; height: 100%; width: ${pct}%; border-radius: 4px;"></div>
+        </div>
       `;
 
       card.addEventListener('click', () => {

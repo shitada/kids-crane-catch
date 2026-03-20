@@ -127,6 +127,8 @@ export type SFXType =
 export interface SaveData {
   collectedVehicles: VehicleId[];
   catchCounts: Record<string, number>;
+  totalPlays: number;
+  totalCatches: number;
 }
 
 // Input

@@ -109,8 +109,8 @@ export class PlayScene implements Scene {
     this.craneMachine = new CraneMachine(machine?.frameColor);
     this.threeScene.add(this.craneMachine.group);
 
-    // Crane arm
-    this.craneArm = new CraneArm();
+    // Crane arm (themed color)
+    this.craneArm = new CraneArm(machine?.themeColor);
     this.threeScene.add(this.craneArm.group);
     this.craneController = new CraneController(this.craneArm);
 
@@ -147,6 +147,12 @@ export class PlayScene implements Scene {
     this.dropButton.onDrop = () => this.handleDrop();
 
     this.bgm.start('play');
+
+    // プレイ回数カウント
+    this.saveManager.incrementPlays();
+
+    // カテゴリ別背景パーティクル
+    this.spawnBackgroundParticles(machine);
   }
 
   private handleDrop(): void {
@@ -177,6 +183,13 @@ export class PlayScene implements Scene {
       this.caughtItems.push(caught.id);
       this.saveManager.addCollected(caught.id);
       this.showNotification('🎉 ゲット！');
+
+      // 連続キャッチボーナス演出
+      if (this.caughtItems.length >= 2) {
+        const praises = ['すごい！', 'やったね！', 'さいこう！', 'てんさい！', 'かっこいい！'];
+        const praise = praises[Math.floor(Math.random() * praises.length)];
+        setTimeout(() => this.showNotification(`⭐ ${praise} ${this.caughtItems.length}こ ゲット！`), 1200);
+      }
     } else {
       // Miss
       this.sfx.play('catchFail');
@@ -277,6 +290,13 @@ export class PlayScene implements Scene {
     this.catchEffect.update(deltaTime, this.threeScene);
     this.missEffect.update(deltaTime, this.threeScene);
 
+    // 背景パーティクルアニメーション
+    for (const child of this.threeScene.children) {
+      if (child.userData.isBgParticle) {
+        child.position.y = child.userData.baseY + Math.sin(performance.now() * 0.001 * child.userData.floatSpeed) * 0.3;
+      }
+    }
+
     // ボックス内落下アニメーション
     if (this.dropItem) {
       this.dropTimer += deltaTime;
@@ -323,5 +343,33 @@ export class PlayScene implements Scene {
 
   getCamera(): THREE.Camera {
     return this.camera;
+  }
+
+  /** カテゴリ別背景パーティクル */
+  private spawnBackgroundParticles(machine: typeof MACHINES[0] | undefined): void {
+    if (!machine) return;
+    const cfgs: Record<string, { color: number; count: number; yRange: [number, number] }> = {
+      vehicles: { color: 0x4488ff, count: 15, yRange: [0.5, 4] },
+      sea: { color: 0x44aaff, count: 20, yRange: [0.5, 4] },
+      flags: { color: 0xff4444, count: 12, yRange: [1, 4.5] },
+      instruments: { color: 0x44ddff, count: 15, yRange: [0.5, 4] },
+      dinosaurs: { color: 0xcc8833, count: 12, yRange: [0.5, 3.5] },
+      insects: { color: 0x88ff44, count: 18, yRange: [0.3, 3.5] },
+    };
+    const cfg = cfgs[machine.id] ?? { color: 0xffffff, count: 10, yRange: [0.5, 4] as [number, number] };
+    const geo = new THREE.SphereGeometry(0.04, 4, 4);
+    const mat = new THREE.MeshPhongMaterial({ color: cfg.color, emissive: cfg.color, emissiveIntensity: 0.3, transparent: true, opacity: 0.5 });
+    for (let i = 0; i < cfg.count; i++) {
+      const p = new THREE.Mesh(geo, mat);
+      p.position.set(
+        (Math.random() - 0.5) * GAME_SETTINGS.machineHalfWidth * 3,
+        cfg.yRange[0] + Math.random() * (cfg.yRange[1] - cfg.yRange[0]),
+        (Math.random() - 0.5) * GAME_SETTINGS.machineHalfDepth * 3,
+      );
+      p.userData.floatSpeed = 0.3 + Math.random() * 0.5;
+      p.userData.baseY = p.position.y;
+      p.userData.isBgParticle = true;
+      this.threeScene.add(p);
+    }
   }
 }

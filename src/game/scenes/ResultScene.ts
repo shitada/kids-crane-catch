@@ -133,6 +133,19 @@ export class ResultScene implements Scene {
     spacer.style.flex = '1';
     this.overlay.appendChild(spacer);
 
+    // プレイ統計
+    const stats = this.saveManager.load();
+    const statsEl = document.createElement('div');
+    statsEl.style.cssText = `
+      color: #aaa;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 0.8rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    `;
+    statsEl.textContent = `あそんだ: ${stats.totalPlays}かい ｜ つかんだ: ${stats.totalCatches}こ`;
+    this.overlay.appendChild(statsEl);
+
     // Buttons
     const btnContainer = document.createElement('div');
     btnContainer.style.cssText = `
