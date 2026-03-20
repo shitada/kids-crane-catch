@@ -18,7 +18,8 @@ export class BGMGenerator {
   }
 
   start(mode: BGMMode = 'title'): void {
-    if (this.playing) return;
+    // 既に再生中なら一旦停止して重複を防ぐ
+    this.stop();
     const ctx = this.audioManager.getContext();
     const dest = this.audioManager.getBGMGain();
     if (!ctx || !dest) return;

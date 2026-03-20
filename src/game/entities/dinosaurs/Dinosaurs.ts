@@ -16,7 +16,7 @@ export function createTrex(): THREE.Group {
   for (const x of [-0.1, 0.1]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.35, 0.12), mat); leg.position.set(x, 0.18, 0.12 * Math.sign(x === -0.1 ? -1 : 1)); g.add(leg); }
   const eye = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), new THREE.MeshPhongMaterial({ color: 0xffcc00 }));
   eye.position.set(0.58, 0.82, 0.12); g.add(eye);
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createTriceratops(): THREE.Group {
@@ -37,7 +37,7 @@ export function createTriceratops(): THREE.Group {
   const h3 = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.1, 6), horn);
   h3.rotation.z = -0.3; h3.position.set(0.55, 0.55, 0); g.add(h3);
   for (const [x, z] of [[-0.15, 0.15], [-0.15, -0.15], [0.15, 0.15], [0.15, -0.15]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.25, 0.1), mat); leg.position.set(x, 0.15, z); g.add(leg); }
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createStegosaurus(): THREE.Group {
@@ -53,7 +53,7 @@ export function createStegosaurus(): THREE.Group {
   tail.rotation.z = Math.PI / 2; tail.position.set(-0.55, 0.45, 0); g.add(tail);
   for (let i = 0; i < 5; i++) { const p = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.15, 4), plate); p.position.set(-0.2 + i * 0.12, 0.7, 0); g.add(p); }
   for (const [x, z] of [[-0.15, 0.12], [-0.15, -0.12], [0.15, 0.12], [0.15, -0.12]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.25, 0.08), mat); leg.position.set(x, 0.15, z); g.add(leg); }
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createPteranodon(): THREE.Group {
@@ -69,7 +69,7 @@ export function createPteranodon(): THREE.Group {
   crest.rotation.z = 0.3; crest.position.set(0.15, 0.52, 0); g.add(crest);
   const wL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.02, 0.7), wing);
   wL.position.set(0, 0.4, 0); g.add(wL);
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createBrachiosaurus(): THREE.Group {
@@ -85,7 +85,7 @@ export function createBrachiosaurus(): THREE.Group {
   const tail = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.5, 6), mat);
   tail.rotation.z = Math.PI / 2; tail.position.set(-0.5, 0.45, 0); g.add(tail);
   for (const [x, z] of [[-0.1, 0.1], [-0.1, -0.1], [0.15, 0.1], [0.15, -0.1]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.35, 0.08), mat); leg.position.set(x, 0.15, z); g.add(leg); }
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createVelociraptor(): THREE.Group {
@@ -101,7 +101,7 @@ export function createVelociraptor(): THREE.Group {
   for (const z of [0.06, -0.06]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.3, 0.06), mat); leg.position.set(0.05, 0.18, z); g.add(leg); }
   const eye = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), new THREE.MeshPhongMaterial({ color: 0xffcc00 }));
   eye.position.set(0.35, 0.56, 0.06); g.add(eye);
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createAnkylosaurus(): THREE.Group {
@@ -119,7 +119,7 @@ export function createAnkylosaurus(): THREE.Group {
   const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.3, 6), mat);
   tail.rotation.z = Math.PI / 2; tail.position.set(-0.35, 0.38, 0); g.add(tail);
   for (const [x, z] of [[-0.12, 0.12], [-0.12, -0.12], [0.12, 0.12], [0.12, -0.12]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.2, 0.08), mat); leg.position.set(x, 0.15, z); g.add(leg); }
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }
 
 export function createParasaurolophus(): THREE.Group {
@@ -135,5 +135,5 @@ export function createParasaurolophus(): THREE.Group {
   const tail = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.5, 6), mat);
   tail.rotation.z = Math.PI / 2; tail.position.set(-0.5, 0.45, 0); g.add(tail);
   for (const [x, z] of [[-0.1, 0.1], [-0.1, -0.1], [0.1, 0.1], [0.1, -0.1]]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.3, 0.08), mat); leg.position.set(x, 0.15, z); g.add(leg); }
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.55); return g;
 }

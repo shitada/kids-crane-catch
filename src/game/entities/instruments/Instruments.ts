@@ -18,7 +18,7 @@ export function createPiano(): THREE.Group {
     bk.position.set(x, 0.39, -0.05);
     g.add(bk);
   }
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -41,7 +41,7 @@ export function createGuitar(): THREE.Group {
   const head = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.03, 0.12), dark);
   head.position.set(0, 0.32, -0.82);
   g.add(head);
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -62,7 +62,7 @@ export function createTaiko(): THREE.Group {
   s1.position.set(0.25, 0.55, 0.1);
   s1.rotation.z = -0.5;
   g.add(s1);
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -83,7 +83,7 @@ export function createTrumpet(): THREE.Group {
     valve.position.set(-0.1 + i * 0.1, 0.45, 0);
     g.add(valve);
   }
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -106,7 +106,7 @@ export function createViolin(): THREE.Group {
   bow.rotation.z = Math.PI / 2;
   bow.position.set(0.05, 0.35, 0.1);
   g.add(bow);
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -121,7 +121,7 @@ export function createHarmonica(): THREE.Group {
     hole.position.set(-0.25 + i * 0.07, 0.32, 0.08);
     g.add(hole);
   }
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -138,7 +138,7 @@ export function createCymbal(): THREE.Group {
   const base = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.04, 8), new THREE.MeshPhongMaterial({ color: 0x444444 }));
   base.position.y = 0.02;
   g.add(base);
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
 
@@ -160,6 +160,6 @@ export function createRecorder(): THREE.Group {
     hole.position.set(-0.15 + i * 0.08, 0.35, 0.045);
     g.add(hole);
   }
-  g.scale.setScalar(0.7);
+  g.scale.setScalar(0.55);
   return g;
 }
