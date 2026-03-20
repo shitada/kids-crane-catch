@@ -1,6 +1,6 @@
 # kids-crane-catch Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-17
+Auto-generated from all feature plans. Last updated: 2026-03-20
 
 ## Active Technologies
 - TypeScript ^5.7.0（strict モード必須） + Three.js ^0.170.0 (001-crane-catch-game)
@@ -24,10 +24,10 @@ npm test && npm run lint
 TypeScript 5.7+（strict モード必須）: Follow standard conventions
 
 ## Recent Changes
-- 001-crane-catch-game: Added TypeScript ^5.7.0（strict モード必須） + Three.js ^0.170.0
+- 001-crane-catch-game: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 001-crane-catch-game: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 001-crane-catch-game: Added TypeScript ^5.7.0（strict モード必須） + Three.js ^0.170.0
 
-- 001-crane-catch-game: Added TypeScript 5.7+（strict モード必須） + Three.js ^0.170.0, Vite ^6.0.0
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

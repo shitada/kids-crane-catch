@@ -108,6 +108,7 @@ export class CraneGameScene implements Scene {
     }
 
     this.threeScene.background = new THREE.Color(0x87ceeb);
+    this.opts.audioManager.playBGM('game');
 
     // Tutorial check
     const tutorialSystem = new TutorialSystem(this.opts.saveManager);
@@ -230,6 +231,7 @@ export class CraneGameScene implements Scene {
   }
 
   exit(): void {
+    this.opts.audioManager.stopBGM();
     this.hud?.dispose();
     this.hud = null;
     this.celebration.dispose();

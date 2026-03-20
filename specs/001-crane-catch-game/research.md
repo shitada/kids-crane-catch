@@ -199,6 +199,63 @@ interface SaveData {
 - CraneConfig に minZ/maxZ を追加するだけで範囲を設定可能（Data-Driven 原則に適合）
 - CatchSystem の距離判定を X-Z ユークリッド距離（`Math.sqrt(dx*dx + dz*dz)`）に変更
 
+## 11. UFOキャッチャー型プロング（爪）ジオメトリ設計
+
+**Decision**: CylinderGeometry（棒部分）+ SphereGeometry（先端曲がり部分）で各プロングを構成。ヒンジ（回転軸）で armBody 下端に取り付け、rotation.z で開閉を表現
+
+**Rationale**:
+- 仕様（FR-003）が「垂直シャフト下端に2本のプロング（爪）がヒンジで取り付けられた構造」を要求
+- 各プロングは「少し湾曲した棒状で先端が内側にカーブ」
+- CylinderGeometry で棒部分（長さ約 0.6、半径 0.04）を作成
+- SphereGeometry（小球）を棒の先端に配置し、内側カーブを表現
+- ヒンジは THREE.Group のピボット回転で実現（Group の position を回転軸に設定し、rotation.z で開閉角度を制御）
+- open() → targetOpenAngle = 0.5 rad（V字型に約30°外側へ開く）
+- close() → targetOpenAngle = 0 rad（プロングが垂直に閉じる）
+- update() で lerp 補間によるスムーズなアニメーション
+- 既存の ringLeft/ringRight（TorusGeometry 半リング）は完全に削除
+
+**構造**:
+```
+armBody (CylinderGeometry, vertical shaft)
+  └── prongGroup (positioned at shaft bottom)
+       ├── prongLeftPivot (Group, rotation.z for hinge)
+       │   └── prongLeftArm (CylinderGeometry)
+       │       └── prongLeftTip (SphereGeometry, curved tip)
+       └── prongRightPivot (Group, rotation.z for hinge, mirrored)
+           └── prongRightArm (CylinderGeometry)
+               └── prongRightTip (SphereGeometry, curved tip)
+```
+
+**Alternatives considered**:
+- 既存の TorusGeometry 半リングを縮小/拡大で開閉 → UFOキャッチャーの爪の見た目にならない
+- BufferGeometry で曲線形状をカスタム作成 → 過剰、CylinderGeometry + SphereGeometry の組み合わせで十分
+- TubeGeometry でカーブパスを定義 → 開閉アニメーション制御が複雑になる
+
+## 12. BGMのシーンライフサイクル呼び出しパターン
+
+**Decision**: 各シーンの enter() で audioManager.playBGM(type) を呼び出し、exit() で audioManager.stopBGM() を呼び出す。BGM の管理責務はシーンが持つ
+
+**Rationale**:
+- 仕様（FR-013a）が「各シーン（TitleScene、CraneGameScene）が画面表示時にBGM再生を開始する責務を持つ」と明記
+- 仕様（FR-013b）が「遷移元シーンの退出時に現在のBGMをフェードアウトし、遷移先シーンの表示時に新しいBGMをフェードインする」と明記
+- AudioManager.playBGM() は内部でフェードイン処理を実装済み
+- AudioManager.stopBGM() は内部でオシレーター停止を実装済み
+- playBGM() は同じ BGMType が既に再生中の場合は早期リターン（重複再生防止）
+- シーン遷移の流れ: 旧シーン.exit() → stopBGM() → 新シーン.enter() → playBGM(type)
+
+**呼び出しマッピング**:
+| Scene | enter() | exit() |
+|-------|---------|--------|
+| TitleScene | `audioManager.playBGM('title')` | `audioManager.stopBGM()` |
+| CraneGameScene | `audioManager.playBGM('game')` | `audioManager.stopBGM()` |
+| CategorySelectScene | なし | なし |
+| ResultScene | なし | なし |
+| ZukanScene | なし | なし |
+
+**Alternatives considered**:
+- SceneManager で一元管理 → シーンごとの BGM 責務が spec に明記されているため不適切
+- BGM を continuous に流し続ける → 仕様がシーンごとに異なる BGM を要求しているため不適切
+
 ## 11. クレーン3段階つかむ動作
 
 **Decision**: DROPPING ステート開始時に `craneArm.open()`、GRABBING ステートで `craneArm.close()` → 判定。現在の `close()` at DROPPING を修正

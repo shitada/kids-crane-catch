@@ -48,6 +48,8 @@ zukan ──「もどる」──→ title
 - 「ずかん」ボタン → `zukan` へ遷移
 - 背景アニメーション（装飾的な3D要素）
 
+**BGM**: `enter()` 内で `audioManager.playBGM('title')` を呼び出し。`exit()` で `audioManager.stopBGM()`（フェードアウト）。
+
 **出力遷移**:
 | Action | Target | Context |
 |--------|--------|---------|

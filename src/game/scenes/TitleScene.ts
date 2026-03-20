@@ -32,6 +32,7 @@ export class TitleScene implements Scene {
     this.threeScene.background = new THREE.Color(0x87ceeb);
     this.createOverlay();
     this.createDecorations();
+    this.opts.audioManager.playBGM('title');
   }
 
   update(deltaTime: number): void {
@@ -44,6 +45,7 @@ export class TitleScene implements Scene {
   }
 
   exit(): void {
+    this.opts.audioManager.stopBGM();
     this.overlay?.remove();
     this.overlay = null;
     for (const d of this.decorations) {

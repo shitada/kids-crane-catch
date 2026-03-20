@@ -2,7 +2,7 @@
 
 **Phase**: 1 — Design & Contracts  
 **Date**: 2026-03-17  
-**Status**: Complete（差分更新: 3段階つかむ動作, BGM和音メロディ, 動物の目, 図鑑グリッド）
+**Status**: Complete（差分更新: UFOキャッチャー型プロング, BGMシーン呼び出し, 3段階つかむ動作, BGM和音メロディ, 動物の目, 図鑑グリッド）
 
 ## Entities
 
@@ -88,7 +88,6 @@ interface PartDefinition {
 | positionX | `number` | X軸位置（左右） |
 | positionZ | `number` | Z軸位置（上下/奥行き） |
 | state | `CraneState` | 現在の状態 |
-| ringScale | `number` | リングの直径スケール |
 | heldItem | `Item \| null` | 掴んでいるアイテム |
 
 ```typescript
@@ -126,33 +125,54 @@ LIFTING → RETURNING (最上部到達)
 RETURNING → IDLE    (初期位置到達)
 ```
 
-### CraneArm（クレーンアーム / リング）
+### CraneArm（クレーンアーム / プロング）
 
-クレーンの視覚的表現。リング（TorusGeometry）形状のキャッチ機構。
+クレーンの視覚的表現。UFOキャッチャー型2本プロング（爪）のキャッチ機構。垂直シャフト（armBody）の下端に2本のプロングがヒンジで取り付けられた構造。各プロングは CylinderGeometry（棒部分）+ SphereGeometry（先端の曲がり部分）で構成。
 
 | Field | Type | Description |
 |-------|------|-------------|
-| ring | `THREE.Mesh` | リング形状メッシュ（TorusGeometry） |
-| ringScale | `number` | 現在のリングスケール |
-| targetRingScale | `number` | 目標リングスケール |
+| prongLeftPivot | `THREE.Group` | 左プロングのヒンジ（回転軸）グループ |
+| prongRightPivot | `THREE.Group` | 右プロングのヒンジ（回転軸）グループ |
+| prongLeftArm | `THREE.Mesh` | 左プロング棒部分（CylinderGeometry） |
+| prongRightArm | `THREE.Mesh` | 右プロング棒部分（CylinderGeometry） |
+| prongLeftTip | `THREE.Mesh` | 左プロング先端（SphereGeometry、内側カーブ） |
+| prongRightTip | `THREE.Mesh` | 右プロング先端（SphereGeometry、内側カーブ） |
+| openAngle | `number` | 現在のプロング開き角（rad） |
+| targetOpenAngle | `number` | 目標プロング開き角（rad） |
 
 ```typescript
 class CraneArm {
-  setPositionX(x: number): void;  // X軸位置設定
-  setPositionZ(z: number): void;  // Z軸位置設定
-  setArmY(y: number): void;       // アーム高さ設定
-  open(): void;   // リングを大きく（targetScale = 1.0）← DROPPING 開始時に呼ぶ
-  close(): void;  // リングを小さく（targetScale = 0.3）← GRABBING 時に呼ぶ
-  update(deltaTime: number): void;
-  dispose(): void;
+  readonly group: THREE.Group;     // シーンに追加するルートグループ
+  setPositionX(x: number): void;   // X軸位置設定
+  setPositionZ(z: number): void;   // Z軸位置設定
+  setArmY(y: number): void;        // アーム高さ設定（シャフト伸縮 + プロング位置）
+  open(): void;   // プロングをV字型に開く（targetOpenAngle = 0.5 rad）← DROPPING 開始時に呼ぶ
+  close(): void;  // プロングを閉じて掴む（targetOpenAngle = 0 rad）← GRABBING 時に呼ぶ
+  update(deltaTime: number): void; // lerp 補間でプロング開閉アニメーション
+  dispose(): void;                 // ジオメトリ・マテリアルの破棄
 }
+```
+
+**3Dオブジェクト階層**:
+```
+group (THREE.Group)
+├── railX (BoxGeometry, 横レール)
+├── railZ (BoxGeometry, 奥行きレール)
+├── armBody (CylinderGeometry, 垂直シャフト)
+└── prongGroup (THREE.Group, シャフト下端に配置)
+    ├── prongLeftPivot (THREE.Group, rotation.z でヒンジ回転)
+    │   └── prongLeftArm (CylinderGeometry, 棒)
+    │       └── prongLeftTip (SphereGeometry, 先端曲がり)
+    └── prongRightPivot (THREE.Group, rotation.z でヒンジ回転, ミラー)
+        └── prongRightArm (CylinderGeometry, 棒)
+            └── prongRightTip (SphereGeometry, 先端曲がり)
 ```
 
 **3段階つかむ動作フロー（CraneGameScene.update から制御）**:
 ```
-1. DROPPING 開始 → craneArm.open()  → リング径が拡大
-2. リング下降（armY 減少）→ armBottomY 到達
-3. GRABBING 開始 → craneArm.close() → リング径が縮小 → CatchSystem.evaluate()
+1. DROPPING 開始 → craneArm.open()  → プロングがV字型に開く
+2. アーム下降（armY 減少）→ armBottomY 到達
+3. GRABBING 開始 → craneArm.close() → プロングが閉じてつかむ → CatchSystem.evaluate()
 ```
 
 ### Collection（コレクション/図鑑）

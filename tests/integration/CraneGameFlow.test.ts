@@ -11,12 +11,14 @@ vi.mock('three', () => {
   const Group = vi.fn(() => ({
     add: vi.fn(), scale: { set: vi.fn() }, children: [],
     position: { x: 0, y: 0, z: 0, set: vi.fn() },
+    rotation: { x: 0, y: 0, z: 0, set: vi.fn() },
+    traverse: vi.fn(),
   }));
   return {
     Scene, PerspectiveCamera, Group,
     DirectionalLight: vi.fn(() => ({ position: { set: vi.fn() } })),
     AmbientLight: vi.fn(),
-    Mesh: vi.fn(() => ({ position: { set: vi.fn() }, scale: { set: vi.fn() }, rotation: { set: vi.fn() } })),
+    Mesh: vi.fn(() => ({ position: { set: vi.fn(), x: 0, y: 0, z: 0 }, scale: { set: vi.fn(), x: 1, y: 1, z: 1 }, rotation: { set: vi.fn(), x: 0, y: 0, z: 0 }, geometry: { dispose: vi.fn() } })),
     SphereGeometry: vi.fn(), BoxGeometry: vi.fn(), CylinderGeometry: vi.fn(),
     ConeGeometry: vi.fn(), TorusGeometry: vi.fn(),
     MeshToonMaterial: vi.fn(), MeshStandardMaterial: vi.fn(),
