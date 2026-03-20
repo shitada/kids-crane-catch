@@ -3,9 +3,9 @@ import * as THREE from 'three';
 export function createBeetleKabuto(): THREE.Group {
   const g = new THREE.Group();
   const mat = new THREE.MeshPhongMaterial({ color: 0x553311 });
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.25, 10, 8), mat);
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.35, 10, 8), mat);
   body.scale.set(1.2, 0.7, 1.0); body.position.y = 0.25; g.add(body);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), mat);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 8, 6), mat);
   head.position.set(0.3, 0.3, 0); g.add(head);
   const horn = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.35, 6), mat);
   horn.rotation.z = -0.4; horn.position.set(0.35, 0.5, 0); g.add(horn);
@@ -13,13 +13,13 @@ export function createBeetleKabuto(): THREE.Group {
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.2, 4), mat);
     leg.position.set(x, 0.08, z); leg.rotation.z = z > 0 ? -0.5 : 0.5; g.add(leg);
   }
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.65); return g;
 }
 
 export function createBeetleKuwagata(): THREE.Group {
   const g = new THREE.Group();
   const mat = new THREE.MeshPhongMaterial({ color: 0x331100 });
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), mat);
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 8), mat);
   body.scale.set(1.3, 0.6, 0.9); body.position.y = 0.22; g.add(body);
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), mat);
   head.position.set(0.28, 0.25, 0); g.add(head);
@@ -31,7 +31,7 @@ export function createBeetleKuwagata(): THREE.Group {
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.008, 0.18, 4), mat);
     leg.position.set(x, 0.06, z); leg.rotation.z = z > 0 ? -0.5 : 0.5; g.add(leg);
   }
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.65); return g;
 }
 
 export function createButterfly(): THREE.Group {
@@ -40,23 +40,23 @@ export function createButterfly(): THREE.Group {
   const wingMat = new THREE.MeshPhongMaterial({ color: 0xff8844, transparent: true, opacity: 0.85 });
   const body = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.02, 0.3, 6), bodyMat);
   body.rotation.z = Math.PI / 2; body.position.y = 0.3; g.add(body);
-  const wL = new THREE.Mesh(new THREE.CircleGeometry(0.25, 8), wingMat);
+  const wL = new THREE.Mesh(new THREE.CircleGeometry(0.35, 8), wingMat);
   wL.position.set(0, 0.35, 0.15); wL.rotation.y = 0.3; g.add(wL);
-  const wR = new THREE.Mesh(new THREE.CircleGeometry(0.25, 8), wingMat);
+  const wR = new THREE.Mesh(new THREE.CircleGeometry(0.35, 8), wingMat);
   wR.position.set(0, 0.35, -0.15); wR.rotation.y = -0.3; g.add(wR);
   const dotMat = new THREE.MeshPhongMaterial({ color: 0x4444ff });
   const dL = new THREE.Mesh(new THREE.CircleGeometry(0.06, 8), dotMat);
   dL.position.set(0, 0.38, 0.16); dL.rotation.y = 0.3; g.add(dL);
   const dR = new THREE.Mesh(new THREE.CircleGeometry(0.06, 8), dotMat);
   dR.position.set(0, 0.38, -0.16); dR.rotation.y = -0.3; g.add(dR);
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.65); return g;
 }
 
 export function createLadybug(): THREE.Group {
   const g = new THREE.Group();
   const red = new THREE.MeshPhongMaterial({ color: 0xdd2222 });
   const black = new THREE.MeshPhongMaterial({ color: 0x111111 });
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), red);
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.28, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), red);
   body.position.y = 0.18; g.add(body);
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), black);
   head.position.set(0.18, 0.2, 0); g.add(head);
@@ -86,7 +86,7 @@ export function createDragonfly(): THREE.Group {
   eL.position.set(0.46, 0.33, 0.04); g.add(eL);
   const eR = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 6), eyeM);
   eR.position.set(0.46, 0.33, -0.04); g.add(eR);
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.65); return g;
 }
 
 export function createGrasshopper(): THREE.Group {
@@ -103,7 +103,7 @@ export function createGrasshopper(): THREE.Group {
     const shin = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.2, 0.03), legBack);
     shin.position.set(-0.2, 0.2, z); shin.rotation.z = -0.5; g.add(shin);
   }
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.65); return g;
 }
 
 export function createFirefly(): THREE.Group {
@@ -147,5 +147,5 @@ export function createMantis(): THREE.Group {
   eL.position.set(0.32, 0.36, 0.04); g.add(eL);
   const eR = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), eyeM);
   eR.position.set(0.32, 0.36, -0.04); g.add(eR);
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.65); return g;
 }
