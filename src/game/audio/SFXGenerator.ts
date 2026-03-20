@@ -64,6 +64,15 @@ export class SFXGenerator {
       case 'velociraptor': this.playTone(ctx, gain, [500, 700, 500, 700], 'sawtooth', 0.6); break;
       case 'ankylosaurus': this.playTone(ctx, gain, [120, 80, 120], 'triangle', 0.8); break;
       case 'parasaurolophus': this.playTone(ctx, gain, [200, 350, 200], 'sine', 1.2); break;
+      // むし
+      case 'beetleKabuto': this.playTone(ctx, gain, [120, 150, 120], 'sawtooth', 0.6); break;
+      case 'beetleKuwagata': this.playTone(ctx, gain, [100, 130, 100], 'sawtooth', 0.6); break;
+      case 'butterfly': this.playTone(ctx, gain, [800, 900, 800, 700], 'sine', 0.8); break;
+      case 'ladybug': this.playTone(ctx, gain, [600, 700, 600], 'sine', 0.5); break;
+      case 'dragonfly': this.playTone(ctx, gain, [500, 600, 700, 600], 'triangle', 0.7); break;
+      case 'grasshopper': this.playTone(ctx, gain, [400, 500, 400, 500], 'square', 0.5); break;
+      case 'firefly': this.playTone(ctx, gain, [1000, 1200, 1000], 'sine', 0.8); break;
+      case 'mantis': this.playTone(ctx, gain, [300, 200, 300], 'sawtooth', 0.6); break;
     }
   }
 

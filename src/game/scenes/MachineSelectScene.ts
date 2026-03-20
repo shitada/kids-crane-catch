@@ -59,14 +59,15 @@ export class MachineSelectScene implements Scene {
     `;
     this.overlay.appendChild(title);
 
-    // Machine cards container
+    // Machine cards container (3列×2行のグリッド)
     const cardContainer = document.createElement('div');
     cardContainer.style.cssText = `
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      justify-content: center;
-      max-width: 800px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      max-width: 700px;
+      width: 100%;
+      padding: 0 1rem;
     `;
 
     for (const machine of MACHINES) {
@@ -75,20 +76,19 @@ export class MachineSelectScene implements Scene {
       card.style.cssText = `
         background: linear-gradient(135deg, ${colorHex}88, ${colorHex}44);
         border: 2px solid ${colorHex};
-        border-radius: 20px;
-        padding: 2rem 1.5rem;
+        border-radius: 16px;
+        padding: 1rem 0.8rem;
         text-align: center;
         cursor: pointer;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        min-width: 200px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         transition: transform 0.2s;
         font-family: 'Zen Maru Gothic', sans-serif;
       `;
 
       card.innerHTML = `
-        <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">${machine.emoji}</div>
-        <div style="color: #FFD700; font-size: 1.5rem; font-weight: 900; margin-bottom: 0.3rem;">${machine.name}</div>
-        <div style="color: #fff; font-size: 0.9rem;">${machine.description}</div>
+        <div style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.3rem;">${machine.emoji}</div>
+        <div style="color: #FFD700; font-size: clamp(0.9rem, 2.5vw, 1.2rem); font-weight: 900; margin-bottom: 0.2rem;">${machine.name}</div>
+        <div style="color: #fff; font-size: clamp(0.6rem, 1.5vw, 0.8rem);">${machine.description}</div>
       `;
 
       card.addEventListener('click', () => {

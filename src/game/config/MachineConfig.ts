@@ -51,4 +51,14 @@ export const MACHINES: MachineCategory[] = [
     frameColor: 0x886622,
     itemIds: ['trex', 'triceratops', 'stegosaurus', 'pteranodon', 'brachiosaurus', 'velociraptor', 'ankylosaurus', 'parasaurolophus'],
   },
+  {
+    id: 'insects',
+    name: 'むし',
+    emoji: '🐛',
+    description: 'いろんな むしを あつめよう！',
+    themeColor: 0x66aa22,
+    bgColor: 0x1a2e0a,
+    frameColor: 0x447722,
+    itemIds: ['beetleKabuto', 'beetleKuwagata', 'butterfly', 'ladybug', 'dragonfly', 'grasshopper', 'firefly', 'mantis'],
+  },
 ];

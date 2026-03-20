@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff6699"/>
+      <stop offset="100%" stop-color="#cc33aa"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#aaddff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#88bbff" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="96" fill="url(#bgB)"/>
+  <!-- Machine body -->
+  <rect x="80" y="140" width="352" height="310" rx="20" fill="#6622cc"/>
+  <rect x="80" y="140" width="352" height="45" rx="20" fill="#8833ee"/>
+  <!-- Glass window -->
+  <rect x="100" y="195" width="312" height="200" rx="12" fill="url(#glass)" stroke="#9955ff" stroke-width="3"/>
+  <!-- Items inside -->
+  <text x="120" y="330" font-size="55" font-family="sans-serif">🚗</text>
+  <text x="200" y="360" font-size="50" font-family="sans-serif">🐠</text>
+  <text x="290" y="320" font-size="48" font-family="sans-serif">🦕</text>
+  <text x="340" y="370" font-size="42" font-family="sans-serif">🎵</text>
+  <!-- Claw inside glass -->
+  <rect x="248" y="200" width="6" height="60" fill="#bbbbbb"/>
+  <g transform="rotate(20, 245, 265)"><rect x="240" y="265" width="6" height="35" rx="2" fill="#ffcc00"/></g>
+  <g transform="rotate(-20, 257, 265)"><rect x="256" y="265" width="6" height="35" rx="2" fill="#ffcc00"/></g>
+  <!-- Prize chute -->
+  <rect x="130" y="405" width="100" height="35" rx="10" fill="#441199"/>
+  <!-- Sign lights -->
+  <circle cx="160" cy="162" r="10" fill="#ff4444"/>
+  <circle cx="256" cy="162" r="10" fill="#ffdd44"/>
+  <circle cx="352" cy="162" r="10" fill="#44ff44"/>
+  <!-- Title on machine -->
+  <text x="155" y="130" font-size="55" font-family="sans-serif" font-weight="900" fill="#FFD700">キャッチ!</text>
+</svg>

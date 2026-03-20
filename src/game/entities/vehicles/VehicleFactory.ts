@@ -19,6 +19,7 @@ import { createSeahorse } from '../sea/Seahorse';
 import { createFlagJapan, createFlagUSA, createFlagBrazil, createFlagFrance, createFlagChina, createFlagAustralia, createFlagIndia, createFlagKorea } from '../flags/Flags';
 import { createPiano, createGuitar, createTaiko, createTrumpet, createViolin, createHarmonica, createCymbal, createRecorder } from '../instruments/Instruments';
 import { createTrex, createTriceratops, createStegosaurus, createPteranodon, createBrachiosaurus, createVelociraptor, createAnkylosaurus, createParasaurolophus } from '../dinosaurs/Dinosaurs';
+import { createBeetleKabuto, createBeetleKuwagata, createButterfly, createLadybug, createDragonfly, createGrasshopper, createFirefly, createMantis } from '../insects/Insects';
 
 const CREATORS: Record<VehicleId, () => THREE.Group> = {
   // のりもの
@@ -66,6 +67,15 @@ const CREATORS: Record<VehicleId, () => THREE.Group> = {
   velociraptor: createVelociraptor,
   ankylosaurus: createAnkylosaurus,
   parasaurolophus: createParasaurolophus,
+  // むし
+  beetleKabuto: createBeetleKabuto,
+  beetleKuwagata: createBeetleKuwagata,
+  butterfly: createButterfly,
+  ladybug: createLadybug,
+  dragonfly: createDragonfly,
+  grasshopper: createGrasshopper,
+  firefly: createFirefly,
+  mantis: createMantis,
 };
 
 export function createVehicleModel(id: VehicleId): THREE.Group {

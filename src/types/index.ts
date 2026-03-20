@@ -65,7 +65,16 @@ export type VehicleId =
   | 'brachiosaurus'
   | 'velociraptor'
   | 'ankylosaurus'
-  | 'parasaurolophus';
+  | 'parasaurolophus'
+  // むし
+  | 'beetleKabuto'
+  | 'beetleKuwagata'
+  | 'butterfly'
+  | 'ladybug'
+  | 'dragonfly'
+  | 'grasshopper'
+  | 'firefly'
+  | 'mantis';
 
 // Machine category
 export interface MachineCategory {
@@ -110,8 +119,10 @@ export type SFXType =
   | 'violin' | 'harmonica' | 'cymbal' | 'recorder'
   // きょうりゅう
   | 'trex' | 'triceratops' | 'stegosaurus' | 'pteranodon'
-  | 'brachiosaurus' | 'velociraptor' | 'ankylosaurus' | 'parasaurolophus';
-
+  | 'brachiosaurus' | 'velociraptor' | 'ankylosaurus' | 'parasaurolophus'
+  // むし
+  | 'beetleKabuto' | 'beetleKuwagata' | 'butterfly' | 'ladybug'
+  | 'dragonfly' | 'grasshopper' | 'firefly' | 'mantis';
 // Save data
 export interface SaveData {
   collectedVehicles: VehicleId[];

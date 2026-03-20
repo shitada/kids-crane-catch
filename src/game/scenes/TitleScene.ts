@@ -16,6 +16,7 @@ export class TitleScene implements Scene {
   private sfx: SFXGenerator;
   private bgm: BGMGenerator;
   private overlay: HTMLDivElement | null = null;
+  private resetBtn: HTMLButtonElement | null = null;
   private encyclopediaOverlay: EncyclopediaOverlay;
   private decorations: THREE.Group;
   private time = 0;
@@ -143,6 +144,37 @@ export class TitleScene implements Scene {
     });
     this.overlay.appendChild(encBtn);
 
+    // Reset button (左下に小さく配置)
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = '🗑️ リセット';
+    resetBtn.style.cssText = `
+      position: fixed;
+      left: max(12px, env(safe-area-inset-left, 12px));
+      bottom: max(12px, env(safe-area-inset-bottom, 12px));
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 1rem;
+      padding: 0.4rem 0.8rem;
+      color: rgba(255,255,255,0.5);
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+      z-index: 30;
+    `;
+    resetBtn.addEventListener('click', () => {
+      if (confirm('ぜんぶの ずかんデータを けしますか？')) {
+        this.saveManager.clear();
+        this.sfx.play('buttonTap');
+        resetBtn.textContent = '✅ リセットしたよ！';
+        setTimeout(() => { resetBtn.textContent = '🗑️ リセット'; }, 1500);
+      }
+    });
+    document.body.appendChild(resetBtn);
+    // Store ref for cleanup
+    this.resetBtn = resetBtn;
+
     uiOverlay.appendChild(this.overlay);
 
     // Encyclopedia overlay
@@ -193,6 +225,10 @@ export class TitleScene implements Scene {
     if (this.overlay) {
       this.overlay.remove();
       this.overlay = null;
+    }
+    if (this.resetBtn) {
+      this.resetBtn.remove();
+      this.resetBtn = null;
     }
   }
 

@@ -60,6 +60,18 @@ export const DINOSAURS_ENCYCLOPEDIA: EncyclopediaEntry[] = [
   { id: 'parasaurolophus', name: 'パラサウロロフス', emoji: '🦕', trivia: 'あたまの ながい トサカで おおきな おとを だしていたよ。なかまに きけんを しらせたんだ！', themeColor: 0x66aa88, soundType: 'parasaurolophus' },
 ];
 
+/** むし */
+export const INSECTS_ENCYCLOPEDIA: EncyclopediaEntry[] = [
+  { id: 'beetleKabuto', name: 'カブトムシ', emoji: '🪲', trivia: 'おおきな つのが かっこいいね！なつの よるに じゅえきに あつまるよ。おすに つのが あるんだ！', themeColor: 0x553311, soundType: 'beetleKabuto' },
+  { id: 'beetleKuwagata', name: 'クワガタ', emoji: '🪲', trivia: 'おおきな あごが つよいよ！カブトムシと にんきを きそうんだ。きの なかで かくれているよ！', themeColor: 0x331100, soundType: 'beetleKuwagata' },
+  { id: 'butterfly', name: 'チョウチョ', emoji: '🦋', trivia: 'きれいな はねで ひらひら とぶよ。いもむしから さなぎに なって うまれかわるんだ！', themeColor: 0xff8844, soundType: 'butterfly' },
+  { id: 'ladybug', name: 'テントウムシ', emoji: '🐞', trivia: 'あかい からだに くろい てんてんが あるよ。アブラムシを たべてくれる やさしい むしだよ！', themeColor: 0xdd2222, soundType: 'ladybug' },
+  { id: 'dragonfly', name: 'トンボ', emoji: '🪰', trivia: 'おおきな めで まわりが よく みえるよ。そらを すいすい とぶのが とくいなんだ！', themeColor: 0x2266aa, soundType: 'dragonfly' },
+  { id: 'grasshopper', name: 'バッタ', emoji: '🦗', trivia: 'ながい あしで ピョーンと ジャンプ！くさむらに かくれるのが とくいだよ！', themeColor: 0x44aa22, soundType: 'grasshopper' },
+  { id: 'firefly', name: 'ホタル', emoji: '✨', trivia: 'おしりが ピカピカ ひかるよ！なつの よるに かわの ちかくで きれいに ひかるんだ！', themeColor: 0xffff44, soundType: 'firefly' },
+  { id: 'mantis', name: 'カマキリ', emoji: '🦟', trivia: 'まえあしが カマの かたちを しているよ。えものを まちぶせ するのが とくいなハンターだよ！', themeColor: 0x55aa33, soundType: 'mantis' },
+];
+
 /** 全図鑑データ（カテゴリID → エントリ配列） */
 export const ALL_ENCYCLOPEDIA: Record<string, EncyclopediaEntry[]> = {
   vehicles: VEHICLE_ENCYCLOPEDIA,
@@ -67,6 +79,7 @@ export const ALL_ENCYCLOPEDIA: Record<string, EncyclopediaEntry[]> = {
   flags: FLAGS_ENCYCLOPEDIA,
   instruments: INSTRUMENTS_ENCYCLOPEDIA,
   dinosaurs: DINOSAURS_ENCYCLOPEDIA,
+  insects: INSECTS_ENCYCLOPEDIA,
 };
 
 /** 全エントリをフラットに取得 */
