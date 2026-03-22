@@ -20,7 +20,7 @@ export function createLion(): THREE.Group {
   for (const [x, z] of [[-0.15, 0.15], [-0.15, -0.15], [0.2, 0.15], [0.2, -0.15]] as [number, number][]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.3, 8), bodyMat); leg.position.set(x, 0.15, z); g.add(leg); }
   const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.01, 0.4, 6), bodyMat);
   tail.rotation.z = 0.8; tail.position.set(-0.5, 0.55, 0); g.add(tail);
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.8); return g;
 }
 
 export function createElephant(): THREE.Group {
@@ -37,7 +37,7 @@ export function createElephant(): THREE.Group {
   for (const [x, z] of [[-0.15, 0.15], [-0.15, -0.15], [0.2, 0.15], [0.2, -0.15]] as [number, number][]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.35, 8), mat); leg.position.set(x, 0.18, z); g.add(leg); }
   const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.25, 4), mat);
   tail.rotation.z = 0.6; tail.position.set(-0.5, 0.6, 0); g.add(tail);
-  g.scale.setScalar(0.5); return g;
+  g.scale.setScalar(0.75); return g;
 }
 
 export function createGiraffe(): THREE.Group {
@@ -54,7 +54,7 @@ export function createGiraffe(): THREE.Group {
   for (const z of [0.06, -0.06]) { const eye = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), new THREE.MeshPhongMaterial({ color: 0x222222 })); eye.position.set(0.47, 1.28, z); g.add(eye); }
   for (let i = 0; i < 4; i++) { const spot = new THREE.Mesh(new THREE.CircleGeometry(0.05, 6), spotMat); spot.position.set(-0.1 + i * 0.12, 0.6 + (i % 2) * 0.08, 0.25); g.add(spot); }
   for (const [x, z] of [[-0.1, 0.1], [-0.1, -0.1], [0.15, 0.1], [0.15, -0.1]] as [number, number][]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4, 6), mat); leg.position.set(x, 0.2, z); g.add(leg); }
-  g.scale.setScalar(0.5); return g;
+  g.scale.setScalar(0.75); return g;
 }
 
 export function createPanda(): THREE.Group {
@@ -70,7 +70,7 @@ export function createPanda(): THREE.Group {
   const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 6), black);
   nose.position.set(0.22, 0.82, 0); g.add(nose);
   for (const [x, z] of [[-0.12, 0.12], [-0.12, -0.12], [0.12, 0.12], [0.12, -0.12]] as [number, number][]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.25, 8), black); leg.position.set(x, 0.13, z); g.add(leg); }
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.8); return g;
 }
 
 export function createRabbit(): THREE.Group {
@@ -87,7 +87,7 @@ export function createRabbit(): THREE.Group {
   nose.position.set(0.16, 0.68, 0); g.add(nose);
   const tail = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), mat);
   tail.position.set(-0.22, 0.35, 0); g.add(tail);
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.85); return g;
 }
 
 export function createPenguin(): THREE.Group {
@@ -106,7 +106,7 @@ export function createPenguin(): THREE.Group {
   beak.rotation.z = -Math.PI / 2; beak.position.set(0.18, 0.7, 0); g.add(beak);
   for (const z of [0.18, -0.18]) { const wing = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.2, 0.04), black); wing.position.set(0, 0.4, z); wing.rotation.x = z > 0 ? -0.3 : 0.3; g.add(wing); }
   for (const z of [0.06, -0.06]) { const foot = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.03, 0.06), orange); foot.position.set(0.03, 0.05, z); g.add(foot); }
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.85); return g;
 }
 
 export function createCat(): THREE.Group {
@@ -124,7 +124,7 @@ export function createCat(): THREE.Group {
   for (const [x, z] of [[-0.08, 0.08], [-0.08, -0.08], [0.12, 0.08], [0.12, -0.08]] as [number, number][]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.2, 6), mat); leg.position.set(x, 0.1, z); g.add(leg); }
   const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.015, 0.4, 6), mat);
   tail.rotation.z = 1.0; tail.position.set(-0.35, 0.45, 0); g.add(tail);
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.85); return g;
 }
 
 export function createDog(): THREE.Group {
@@ -146,5 +146,5 @@ export function createDog(): THREE.Group {
   for (const [x, z] of [[-0.1, 0.1], [-0.1, -0.1], [0.15, 0.1], [0.15, -0.1]] as [number, number][]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.04, 0.25, 6), mat); leg.position.set(x, 0.13, z); g.add(leg); }
   const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.015, 0.25, 6), mat);
   tail.rotation.z = 1.2; tail.position.set(-0.35, 0.55, 0); g.add(tail);
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.8); return g;
 }

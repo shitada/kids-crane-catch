@@ -8,7 +8,7 @@ export const GAME_SETTINGS = {
   /** クレーン戻り速度 */
   craneReturnSpeed: 4.0,
   /** キャッチ判定距離（この距離以内なら成功） */
-  catchRadius: 0.7,
+  catchRadius: 0.5,
   /** 1プレイの回数制限 */
   maxAttempts: 3,
   /** ゲーム機内部のサイズ（X方向の半分） */

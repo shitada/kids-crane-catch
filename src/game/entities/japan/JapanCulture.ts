@@ -26,7 +26,7 @@ export function createCastle(): THREE.Group {
   // 金のシャチホコ
   const shachi = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), new THREE.MeshPhongMaterial({ color: 0xffdd00 }));
   shachi.position.y = 1.08; g.add(shachi);
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.8); return g;
 }
 
 export function createTorii(): THREE.Group {
@@ -43,7 +43,7 @@ export function createTorii(): THREE.Group {
   // 額束
   const gakuzuka = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.1, 0.12), new THREE.MeshPhongMaterial({ color: 0x222222 }));
   gakuzuka.position.set(0, 0.88, 0); g.add(gakuzuka);
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.8); return g;
 }
 
 export function createFujisan(): THREE.Group {
@@ -61,7 +61,7 @@ export function createFujisan(): THREE.Group {
     const cloud = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 }));
     cloud.scale.set(1.5, 0.6, 1.0); cloud.position.set(x, 0.55, z); g.add(cloud);
   }
-  g.scale.setScalar(0.55); return g;
+  g.scale.setScalar(0.8); return g;
 }
 
 export function createSakuramochi(): THREE.Group {
@@ -77,7 +77,7 @@ export function createSakuramochi(): THREE.Group {
   // 皿
   const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.22, 0.04, 12), new THREE.MeshPhongMaterial({ color: 0xeeeecc }));
   plate.position.y = 0.12; g.add(plate);
-  g.scale.setScalar(0.7); return g;
+  g.scale.setScalar(0.95); return g;
 }
 
 export function createKoinobori(): THREE.Group {
@@ -104,7 +104,7 @@ export function createKoinobori(): THREE.Group {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 6), new THREE.MeshPhongMaterial({ color: 0xffffff }));
     eye.position.set(0.05, 1.08 - i * 0.2, 0.06); g.add(eye);
   }
-  g.scale.setScalar(0.5); return g;
+  g.scale.setScalar(0.75); return g;
 }
 
 export function createDaruma(): THREE.Group {
@@ -126,7 +126,7 @@ export function createDaruma(): THREE.Group {
   // 底面の安定
   const bottom = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.04, 10), red);
   bottom.position.y = 0.08; g.add(bottom);
-  g.scale.setScalar(0.65); return g;
+  g.scale.setScalar(0.9); return g;
 }
 
 export function createChochin(): THREE.Group {
@@ -149,7 +149,7 @@ export function createChochin(): THREE.Group {
   // 文字「祭」の代わりに装飾
   const kanji = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.12, 0.1), new THREE.MeshPhongMaterial({ color: 0x111111 }));
   kanji.position.set(0.2, 0.5, 0); g.add(kanji);
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.85); return g;
 }
 
 export function createManekiNeko(): THREE.Group {
@@ -185,5 +185,5 @@ export function createManekiNeko(): THREE.Group {
   // 模様
   const spot = new THREE.Mesh(new THREE.CircleGeometry(0.06, 8), orange);
   spot.position.set(-0.1, 0.4, 0.2); g.add(spot);
-  g.scale.setScalar(0.6); return g;
+  g.scale.setScalar(0.85); return g;
 }

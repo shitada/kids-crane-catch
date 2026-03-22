@@ -22,7 +22,7 @@ describe('CatchSystem', () => {
   });
 
   it('catches item within radius', () => {
-    const items = [makeItem(0.5, 0.3)];
+    const items = [makeItem(0.3, 0.2)];
     const result = catchSystem.evaluate(new THREE.Vector3(0, 0.8, 0), items);
     expect(result).toBe(items[0]);
   });
